@@ -1,0 +1,42 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="theme-color"
+      content="oklch(0.147 0.004 49.25)"
+      media="(prefers-color-scheme: dark)"
+    />
+    <meta
+      name="theme-color"
+      content="oklch(1 0 0)"
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="
+    script-src 'self' 'wasm-unsafe-eval';
+    font-src 'self';
+    img-src 'self' data: blob:;
+    connect-src 'self';
+    manifest-src 'self';
+  "
+    />
+
+    <title>Explorer</title>
+
+    <link rel="manifest" href="/manifest.json" />
+    <link href="/src/styles/global.css" rel="stylesheet" />
+    <link rel="icon" href="/favicon.png" type="image/png" />
+  </head>
+  <body
+    class="antialiased font-sans bg-base-100 text-base-content min-h-screen"
+    data-theme="dark"
+  >
+    <div id="app" class="h-screen flex flex-col overflow-hidden">
+      <!-- App content will be injected here -->
+    </div>
+
+    <script src="/src/main.ts" type="module"></script>
+  </body>
+</html>

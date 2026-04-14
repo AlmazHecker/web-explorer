@@ -1,0 +1,28 @@
+{
+  "name": "explorer",
+  "type": "module",
+  "version": "0.0.1",
+  "homepage": "https://AlmazHecker.github.io/explorer",
+  "scripts": {
+    "dev": "vite dev --host",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "analyze-bundle": "npx vite-bundle-visualizer",
+    "deploy:gh-pages": "npm run build:gh-pages && npx gh-pages -d dist",
+    "build:gh-pages": "vite build --mode gh-pages"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.1.17",
+    "daisyui": "^5.5.19",
+    "idb-keyval": "^6.2.2",
+    "taglib-wasm": "^1.1.2",
+    "tailwindcss": "^4.1.17",
+    "zustand": "^5.0.9"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "@types/wicg-file-system-access": "^2023.10.7",
+    "prettier": "^3.7.4",
+    "typescript": "^5.9.3"
+  }
+}

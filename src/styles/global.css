@@ -1,0 +1,30 @@
+@import "tailwindcss";
+@plugin "daisyui";
+@import "./fonts.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --font-mono: var(--font-geist-mono);
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-base-300);
+  border-radius: 10px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}

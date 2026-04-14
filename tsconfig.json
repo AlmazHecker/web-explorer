@@ -1,0 +1,21 @@
+{
+  "include": ["**/*"],
+  "exclude": ["dist"],
+  "compilerOptions": {
+    "noEmit": true,
+    "strict": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "types": ["@types/wicg-file-system-access", "vite/client"],
+    "esModuleInterop": true,
+    "moduleResolution": "Bundler",
+    "module": "ES2022",
+    "target": "ES2015",
+    "resolveJsonModule": true,
+    "lib": ["DOM"],
+    "skipLibCheck": true
+  }
+}
