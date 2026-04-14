@@ -38,7 +38,7 @@ export class VideoPlayerBar {
     const entry = this.queue[index];
     const file = await entry.getFile();
 
-    this.videoViewer.update(file);
+    this.videoViewer.open(file);
     this.render();
   }
 
@@ -97,15 +97,14 @@ export class VideoPlayerBar {
             <button tabindex="0" class="btn btn-ghost btn-xs gap-2 normal-case font-medium">
               Queue <div class="badge badge-primary badge-xs">${this.queue.length}</div>
             </button>
-            <div tabindex="0" class="dropdown-content z-60 card card-compact w-72 bg-base-100 border border-base-content/10 shadow-2xl mb-2">
+            <div tabindex="0" class="dropdown-content z-60 card card-compact bg-base-100 border border-base-content/10 shadow-2xl mb-2">
               <div class="card-body p-0">
                 <ul class="menu menu-sm max-h-72 overflow-y-auto p-1">
                   ${this.queue
                     .map((e, i) => {
-                      const isActive = i === this.currentIndex;
                       return `
                       <li data-id="${i}">
-                        <div class="flex justify-between items-center py-2 px-3 ${isActive ? "active font-bold" : ""}">
+                        <div class="flex justify-between items-center py-2 px-3">
                           <span class="truncate flex-1 cursor-pointer">${i + 1}. ${e.name}</span>
                           <button class="btn btn-ghost btn-xs btn-circle btn-remove hover:bg-error hover:text-error-content ml-2">✕</button>
                         </div>
