@@ -3,6 +3,7 @@ import { EntryExplorer } from "@/widgets/entry-explorer";
 import { pluginManager } from "./shared/api/file-system/plugin-manager";
 import { MusicPlugin } from "./features/plugins/music-plugin";
 import { VideoPlugin } from "./features/plugins/video-plugin";
+import { ImagePlugin } from "./features/plugins/image-plugin";
 
 export const PLUGIN_SLOTS_ROOT = "plugin-slots-root";
 
@@ -33,6 +34,7 @@ const bootstrapApp = async () => {
 
   pluginManager.register(MusicPlugin);
   pluginManager.register(VideoPlugin);
+  pluginManager.register(ImagePlugin);
 
   new Header(document.getElementById("header-container")!);
   const entryExplorer = new EntryExplorer(

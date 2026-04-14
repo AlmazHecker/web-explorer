@@ -43,7 +43,7 @@ export class VideoPlugin implements EntryPlugin {
         handler: async (entry: Entry) => {
           if (entry.kind === "file") {
             const file = await entry.getFile();
-            this.videoViewer.update(file);
+            this.videoViewer.open(file);
           }
         },
       },
@@ -62,7 +62,7 @@ export class VideoPlugin implements EntryPlugin {
   public async onOpen(entry: Entry) {
     if (entry.kind === "file") {
       const file = await entry.getFile();
-      this.videoViewer.update(file);
+      this.videoViewer.open(file);
     }
   }
 }
