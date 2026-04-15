@@ -25,12 +25,7 @@ export class MusicPlugin implements EntryPlugin {
       {
         label: "Play Music",
         icon: playIcon(),
-        handler: async (entry) => {
-          if (entry.kind === "file") {
-            const file = await entry.getFile();
-            this.playerBar.play(file);
-          }
-        },
+        handler: this.onOpen.bind(this),
       },
     ];
   }

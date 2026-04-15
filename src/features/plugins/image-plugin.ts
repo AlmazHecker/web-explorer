@@ -28,12 +28,7 @@ export class ImagePlugin implements EntryPlugin {
       {
         label: "Open Image",
         icon: playIcon(),
-        handler: async (entry: Entry) => {
-          if (entry.kind === "file") {
-            const file = await entry.getFile();
-            this.imageViewer.open(file);
-          }
-        },
+        handler: this.onOpen.bind(this),
       },
     ];
   }
