@@ -19,12 +19,12 @@ const bootstrapApp = async () => {
   app.className =
     "md:max-w-3xl w-full mx-auto flex flex-col h-screen overflow-hidden";
   app.innerHTML = `
-    <div id="header-container"></div>
+  <div id="header-container"></div>
 
-    <div id="explorer-container" class="flex-1 overflow-auto no-scrollbar relative bg-base-200/30 border border-base-content/5">
-    </div>
+  <div id="explorer-container" class="flex-1 flex flex-col overflow-hidden bg-base-200/30 border border-base-content/5">
+  </div>
 
-    <div id="${PLUGIN_SLOTS_ROOT}"></div>
+  <div id="${PLUGIN_SLOTS_ROOT}"></div>
 `;
   pluginManager.setRootSlot(document.getElementById(PLUGIN_SLOTS_ROOT)!);
 

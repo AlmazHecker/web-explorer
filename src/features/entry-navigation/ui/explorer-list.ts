@@ -12,7 +12,6 @@ export class ExplorerList {
 
   constructor(container: HTMLDivElement) {
     this.container = container;
-    this.container.className = "flex-1 overflow-y-auto no-scrollbar p-2";
 
     this.unsubscribe = entryStore.subscribe((state, prevState) => {
       if (
