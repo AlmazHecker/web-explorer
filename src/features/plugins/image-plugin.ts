@@ -3,7 +3,7 @@ import {
   EntryPlugin,
   PluginAction,
 } from "@/shared/api/file-system/types";
-import { playIcon, videoIcon } from "@/shared/ui/icons";
+import { playIcon, imageIcon } from "@/shared/ui/icons";
 import { ImageViewer } from "./image/ui/image-viewer";
 
 export class ImagePlugin implements EntryPlugin {
@@ -20,7 +20,7 @@ export class ImagePlugin implements EntryPlugin {
   }
 
   public getIcon(): string {
-    return videoIcon({ className: "size-full" });
+    return imageIcon({ className: "size-full" });
   }
 
   public getActions(entry: Entry): PluginAction[] {
