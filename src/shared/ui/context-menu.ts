@@ -7,7 +7,7 @@ export class ContextMenu {
     this.container = document.createElement("ul");
     this.container.id = "entry-context-menu";
     this.container.className =
-      "dropdown menu p-1 fixed bg-base-100 shadow-sm z-[100] bg-base-200 border border-base-content/10 rounded-xl min-w-[160px] hidden backdrop-blur-xl animate-in fade-in zoom-in duration-200";
+      "dropdown menu fixed bg-base-100 shadow-sm z-[100] bg-base-200 border border-base-content/10 rounded-xl min-w-[160px] hidden backdrop-blur-xl animate-in fade-in zoom-in duration-200";
     document.body.appendChild(this.container);
 
     window.addEventListener("click", () => this.hide());

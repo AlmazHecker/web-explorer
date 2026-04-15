@@ -11,7 +11,7 @@ export class VideoViewer {
         <form method="dialog">
       <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-white bg-black/20 hover:bg-black/40 z-10">✕</button>
     </form>
-        <video id="plugin-video-player" controls autoplay class="w-full aspect-video"></video>
+        <video id="plugin-video-player" loop controls autoplay class="w-full aspect-video"></video>
       </div>
       <form method="dialog" class="modal-backdrop">
         <button id="modal-close-btn">close</button>
@@ -25,6 +25,7 @@ export class VideoViewer {
   }
 
   public async open(file: File) {
+    this.video.src = "";
     if (!this.dialog.open) {
       this.dialog.showModal();
     }
@@ -39,6 +40,5 @@ export class VideoViewer {
 
   private onClose() {
     URL.revokeObjectURL(this.video.src);
-    this.video.src = "";
   }
 }

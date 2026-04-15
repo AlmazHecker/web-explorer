@@ -31,6 +31,7 @@ export class ImageViewer {
   }
 
   public async open(file: File) {
+    this.image.src = "";
     if (!this.dialog.open) {
       this.dialog.showModal();
     }
@@ -40,6 +41,5 @@ export class ImageViewer {
 
   private onClose() {
     URL.revokeObjectURL(this.image.src);
-    // this.image.src = "";
   }
 }
