@@ -33,7 +33,7 @@ export class PlayerBar {
     this.audio.loop = true;
 
     this.container.innerHTML = `
-      <div id="pb-wrapper" class="fixed bottom-0 left-0 right-0 z-50 flex flex-col items-center transition-all duration-500 opacity-0 translate-y-full pointer-events-none">
+      <div id="pb-wrapper" class="fixed bottom-0 left-0 right-0 z-50 flex flex-col items-center transition-all duration-500 translate-y-full pointer-events-none">
         <div class="w-full max-w-lg border-t border-base-content/10 bg-base-100/80 backdrop-blur-xl shadow-2xl mb-4 border-x border-b mx-4">
           <input type="range" min="0" step="0.1" value="0" class="range-sm h-2 range w-full range-primary" id="pb-progress" />
           <div class="p-4 flex items-center justify-between gap-4">
@@ -214,7 +214,6 @@ export class PlayerBar {
 
   private syncFullUI() {
     const hasMetadata = !!this.metadata;
-    this.wrapper.classList.toggle("opacity-0", !hasMetadata);
     this.wrapper.classList.toggle("translate-y-full", !hasMetadata);
     this.wrapper.classList.toggle("pointer-events-none", !hasMetadata);
 

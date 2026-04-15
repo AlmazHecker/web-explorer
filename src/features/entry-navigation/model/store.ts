@@ -1,5 +1,7 @@
 import { createStore } from "zustand/vanilla";
 import { Entry } from "@/shared/api/file-system/types";
+import { set as IDBSet } from "idb-keyval";
+import { ROOT_HANDLE_KEY } from "@/shared/api/file-system/scanner";
 
 interface EntryStore {
   entries: Entry[];
@@ -12,9 +14,7 @@ interface EntryStore {
   setIsLoading: (isLoading: boolean) => void;
   setSearchQuery: (query: string) => void;
   setViewMode: (mode: "list" | "grid") => void;
-  cd: (directory: FileSystemDirectoryHandle) => void;
-  goBack: () => void;
-  resetHistory: (root: FileSystemDirectoryHandle) => void;
+  setHistory: (root: FileSystemDirectoryHandle[]) => void;
 }
 
 export const entryStore = createStore<EntryStore>((set, get) => ({
@@ -30,16 +30,8 @@ export const entryStore = createStore<EntryStore>((set, get) => ({
   setSearchQuery: (searchQuery) => set({ searchQuery }),
   setViewMode: (viewMode) => set({ viewMode }),
 
-  resetHistory: (root) => set({ history: [root], searchQuery: "" }),
-
-  cd: (directory) => {
-    set((state) => ({ history: [...state.history, directory] }));
-  },
-
-  goBack: () => {
-    const { history } = get();
-    if (history.length <= 1) return;
-    const newHistory = history.slice(0, -1);
-    set({ history: newHistory });
+  setHistory: (history) => {
+    IDBSet(ROOT_HANDLE_KEY, history);
+    set({ history, searchQuery: "" });
   },
 }));

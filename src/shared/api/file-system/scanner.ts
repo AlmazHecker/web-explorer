@@ -1,32 +1,28 @@
-import { set, get } from "idb-keyval";
+import { get } from "idb-keyval";
 
-const DB_KEY = "last-folder-handle";
+export const ROOT_HANDLE_KEY = "root-directory-handle";
 
 type Args = {
-  target: "LAST" | "NEW" | FileSystemDirectoryHandle;
+  target: "LAST" | "NEW" | FileSystemDirectoryHandle[];
 };
 
 export const scanDirectory = async (
   args: Args,
-): Promise<FileSystemDirectoryHandle> => {
+): Promise<FileSystemDirectoryHandle[]> => {
   const { target } = args;
-  let rootDir: FileSystemDirectoryHandle;
+  let handleHistory: FileSystemDirectoryHandle[];
 
-  const saved = await get<FileSystemDirectoryHandle>(DB_KEY);
   if (target === "LAST") {
-    if (
-      !saved ||
-      (await saved.queryPermission({ mode: "read" })) !== "granted"
-    ) {
-      throw "not granted";
-    }
-    rootDir = saved;
+    const saved = await get<FileSystemDirectoryHandle[]>(ROOT_HANDLE_KEY);
+
+    if (!saved) throw "No saved handle found";
+
+    handleHistory = saved;
   } else if (target === "NEW") {
-    rootDir = await window.showDirectoryPicker({ mode: "read" });
-    await set(DB_KEY, rootDir);
+    handleHistory = [await window.showDirectoryPicker({ mode: "read" })];
   } else {
-    rootDir = target;
+    handleHistory = target;
   }
 
-  return rootDir;
+  return handleHistory;
 };

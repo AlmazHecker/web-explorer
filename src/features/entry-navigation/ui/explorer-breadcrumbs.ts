@@ -62,11 +62,9 @@ export class ExplorerBreadcrumbs {
     const target = e.target as HTMLElement;
 
     if (target.closest("#breadcrumb-back")) {
-      const { goBack, history } = entryStore.getState();
+      const { history } = entryStore.getState();
       if (history.length > 1) {
-        goBack();
-        const newHistory = entryStore.getState().history;
-        this.dispatchNavigation(newHistory[newHistory.length - 1]);
+        this.dispatchNavigation(history.slice(0, history.length - 1));
       }
       return;
     }
@@ -77,14 +75,11 @@ export class ExplorerBreadcrumbs {
       const { history } = entryStore.getState();
 
       if (index === history.length - 1) return;
-
-      const targetHandle = history[index];
-      entryStore.setState({ history: history.slice(0, index + 1) });
-      this.dispatchNavigation(targetHandle);
+      this.dispatchNavigation(history.slice(0, index + 1));
     }
   }
 
-  private dispatchNavigation(handle: FileSystemDirectoryHandle) {
+  private dispatchNavigation(handle: FileSystemDirectoryHandle[]) {
     window.dispatchEvent(new CustomEvent("explorer:cd", { detail: handle }));
   }
 

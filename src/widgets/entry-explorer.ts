@@ -19,7 +19,7 @@ export class EntryExplorer {
     this.renderShell();
 
     window.addEventListener("explorer:cd", ((
-      e: CustomEvent<FileSystemDirectoryHandle>,
+      e: CustomEvent<FileSystemDirectoryHandle[]>,
     ) => {
       this.loadDirectoryContent(e.detail);
     }) as EventListener);
@@ -47,25 +47,26 @@ export class EntryExplorer {
   }
 
   public async loadDirectoryContent(
-    target: "LAST" | "NEW" | FileSystemDirectoryHandle,
+    target:
+      | "LAST"
+      | "NEW"
+      | FileSystemDirectoryHandle[]
+      | FileSystemDirectoryHandle,
   ) {
-    const { setIsLoading, resetHistory, cd, history } = entryStore.getState();
+    const { setIsLoading, setHistory, history } = entryStore.getState();
     try {
       setIsLoading(true);
 
-      const rootDir = await scanDirectory({ target });
-      if (!rootDir) return;
-
-      if (target === "LAST" || target === "NEW") {
-        resetHistory(rootDir);
-      } else {
-        if (history[history.length - 1] !== rootDir) {
-          cd(rootDir);
-        }
+      if (target instanceof FileSystemDirectoryHandle) {
+        target = [...history, target];
       }
 
+      const newHistory = await scanDirectory({ target });
+      if (!newHistory) return;
+      setHistory(newHistory);
+
       const entries: Entry[] = [];
-      for await (const handle of rootDir.values()) {
+      for await (const handle of newHistory[newHistory.length - 1].values()) {
         entries.push(handle);
       }
 

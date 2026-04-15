@@ -10,10 +10,9 @@ export const PLUGIN_SLOTS_ROOT = "plugin-slots-root";
 const bootstrapApp = async () => {
   const theme = localStorage.getItem("theme");
   if (theme) {
-    document.documentElement.classList.add(theme);
-    document.body.setAttribute("data-theme", theme);
+    document.documentElement.setAttribute("data-theme", theme);
   } else {
-    document.body.setAttribute("data-theme", "dark");
+    document.documentElement.setAttribute("data-theme", "dark");
   }
 
   const app = document.getElementById("app")!;
