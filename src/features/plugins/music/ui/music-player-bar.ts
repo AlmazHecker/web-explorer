@@ -44,7 +44,7 @@ export class PlayerBar {
       <div id="pb-wrapper" class="fixed bottom-0 left-0 right-0 z-50 flex flex-col items-center transition-all duration-500 translate-y-full pointer-events-none">
         <div class="relative w-full max-w-lg border-t border-base-content/10 bg-base-100/80 backdrop-blur-xl shadow-2xl mb-4 border-x border-b mx-4">
           
-          <button id="pb-close" class="btn btn-ghost btn-circle btn-xs absolute -top-2 -right-2 bg-base-100 border border-base-content/10 shadow-sm z-[60]">
+          <button id="pb-close" class="btn btn-ghost btn-circle btn-xs absolute -top-2 -right-2 bg-base-100 border border-base-content/10 shadow-sm z-60">
             ${xIcon({ className: "size-3" })}
           </button>
 

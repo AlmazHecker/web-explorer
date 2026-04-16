@@ -5,7 +5,6 @@ export type PluginContext = {
   relativeIndex: number;
 };
 
-// handler variants
 type HandlerWithContext = (
   entry: Entry,
   context: Promise<PluginContext>,
@@ -13,7 +12,6 @@ type HandlerWithContext = (
 
 type HandlerWithoutContext = (entry: Entry) => void;
 
-// discriminated union
 export type PluginAction =
   | {
       label: string;
