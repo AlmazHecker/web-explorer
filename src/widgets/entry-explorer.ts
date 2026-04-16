@@ -52,7 +52,8 @@ export class EntryExplorer {
       | FileSystemDirectoryHandle[]
       | FileSystemDirectoryHandle,
   ) {
-    const { setIsLoading, setHistory, history } = entryStore.getState();
+    const { setIsLoading, setHistory, setEntries, history } =
+      entryStore.getState();
     try {
       setIsLoading(true);
 
@@ -75,7 +76,7 @@ export class EntryExplorer {
         return a.name.localeCompare(b.name);
       });
 
-      this.list?.setEntries(entries);
+      setEntries(entries);
     } catch (error) {
       if (error === "not granted") {
         this.renderNoPermission();

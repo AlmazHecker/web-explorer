@@ -1,19 +1,39 @@
 export type Entry = FileSystemDirectoryHandle | FileSystemFileHandle;
 
-export interface PluginAction {
-  label: string;
-  icon?: string;
-  handler: (entry: Entry, entries: Entry[]) => void;
-}
+export type PluginContext = {
+  entries: Entry[];
+  relativeIndex: number;
+};
+
+// handler variants
+type HandlerWithContext = (
+  entry: Entry,
+  context: Promise<PluginContext>,
+) => void;
+
+type HandlerWithoutContext = (entry: Entry) => void;
+
+// discriminated union
+export type PluginAction =
+  | {
+      label: string;
+      icon?: string;
+      requiresContext: true;
+      handler: HandlerWithContext;
+    }
+  | {
+      label: string;
+      icon?: string;
+      requiresContext?: false;
+      handler: HandlerWithoutContext;
+    };
 
 export interface EntryPlugin {
   id: string;
   name: string;
-  supportedExtensions?: string[];
+  extensions: Set<string>;
 
   initialize?(rootSlot: HTMLElement): void;
   getIcon?(entry: Entry): string | null;
   getActions?(entry: Entry): PluginAction[];
-  getSlotView?(slotName: string): { new (container: HTMLElement): any } | null;
-  onOpen(entry: Entry, entries: Entry[]): void;
 }

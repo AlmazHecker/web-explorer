@@ -2,6 +2,7 @@ import {
   Entry,
   EntryPlugin,
   PluginAction,
+  PluginContext,
 } from "@/shared/api/file-system/types";
 import { playIcon, plusIcon, videoIcon } from "@/shared/ui/icons";
 import { VideoViewer } from "./video/ui/video-viewer";
@@ -10,7 +11,7 @@ import { VideoPlayerBar } from "./video/ui/video-player-bar";
 export class VideoPlugin implements EntryPlugin {
   public id = "video-plugin";
   public name = "Video Handler";
-  public supportedExtensions = ["mp4", "webm"];
+  public extensions = new Set(["mp4", "webm"]);
   private videoViewer!: VideoViewer;
   private videoPlayerBar!: VideoPlayerBar;
 
@@ -40,24 +41,23 @@ export class VideoPlugin implements EntryPlugin {
       {
         label: "Play Video",
         icon: playIcon(),
-        handler: this.onOpen.bind(this),
+        handler: (entry, context) => {
+          if (entry.kind !== "directory") {
+            this.videoViewer.open(entry, context);
+          }
+        },
+        requiresContext: true,
       },
       {
         label: "Add to Queue",
         icon: plusIcon(),
-        handler: (entry: Entry, entries: Entry[]) => {
+        handler: (entry) => {
           if (entry.kind === "file") {
             this.videoPlayerBar.addToQueue(entry);
           }
         },
+        requiresContext: false,
       },
     ];
-  }
-
-  public async onOpen(entry: Entry, entries: Entry[]) {
-    if (entry.kind === "file") {
-      const file = await entry.getFile();
-      this.videoViewer.open(file, entries);
-    }
   }
 }

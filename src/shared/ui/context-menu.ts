@@ -1,4 +1,5 @@
 import { Entry, PluginAction } from "@/shared/api/file-system/types";
+import { pluginManager } from "../api/file-system/plugin-manager";
 
 export class ContextMenu {
   private container: HTMLUListElement;
@@ -19,11 +20,10 @@ export class ContextMenu {
   }
 
   public show(
-    x: number,
-    y: number,
+    e: MouseEvent,
     actions: PluginAction[],
-    entry: Entry,
     entries: Entry[],
+    at: number,
   ) {
     if (actions.length === 0) return;
 
@@ -43,7 +43,7 @@ export class ContextMenu {
     this.container.querySelectorAll("[data-id]").forEach((btn) => {
       btn.addEventListener("click", () => {
         const index = parseInt(btn.getAttribute("data-id")!, 10);
-        actions[index].handler(entry, entries);
+        pluginManager.executeAction(actions[index], entries, at);
         this.hide();
       });
     });
@@ -53,11 +53,11 @@ export class ContextMenu {
     const { innerWidth, innerHeight } = window;
     const { offsetWidth, offsetHeight } = this.container;
 
-    let left = x;
-    let top = y;
+    let left = e.clientX;
+    let top = e.clientY;
 
-    if (x + offsetWidth > innerWidth) left = x - offsetWidth;
-    if (y + offsetHeight > innerHeight) top = y - offsetHeight;
+    if (e.clientX + offsetWidth > innerWidth) left = e.clientX - offsetWidth;
+    if (e.clientY + offsetHeight > innerHeight) top = e.clientY - offsetHeight;
 
     this.container.style.left = `${left}px`;
     this.container.style.top = `${top}px`;

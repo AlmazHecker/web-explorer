@@ -2,6 +2,7 @@ import {
   Entry,
   EntryPlugin,
   PluginAction,
+  PluginContext,
 } from "@/shared/api/file-system/types";
 import { playIcon, imageIcon } from "@/shared/ui/icons";
 import { ImageViewer } from "./image/ui/image-viewer";
@@ -9,7 +10,7 @@ import { ImageViewer } from "./image/ui/image-viewer";
 export class ImagePlugin implements EntryPlugin {
   public id = "image-plugin";
   public name = "Image Handler";
-  public supportedExtensions = ["png", "jpg", "jpeg", "gif", "webp"];
+  public extensions = new Set(["png", "jpg", "jpeg", "gif", "webp"]);
   private imageViewer!: ImageViewer;
 
   public initialize(rootSlot: HTMLElement) {
@@ -28,15 +29,13 @@ export class ImagePlugin implements EntryPlugin {
       {
         label: "Open Image",
         icon: playIcon(),
-        handler: this.onOpen.bind(this),
+        handler: (entry, context) => {
+          if (entry.kind !== "directory") {
+            this.imageViewer.open(entry, context);
+          }
+        },
+        requiresContext: true,
       },
     ];
-  }
-
-  public async onOpen(entry: Entry) {
-    if (entry.kind === "file") {
-      const file = await entry.getFile();
-      this.imageViewer.open(file);
-    }
   }
 }

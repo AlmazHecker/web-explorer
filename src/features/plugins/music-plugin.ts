@@ -9,7 +9,7 @@ import { musicIcon, playIcon } from "@/shared/ui/icons";
 export class MusicPlugin implements EntryPlugin {
   public id = "music-plugin";
   public name = "Music Handler";
-  public supportedExtensions = ["mp3", "wav", "m4a", "flac", "ogg"];
+  public extensions = new Set(["mp3", "wav", "m4a", "flac", "ogg"]);
   private playerBar!: PlayerBar;
 
   public initialize(rootSlot: HTMLElement) {
@@ -25,15 +25,13 @@ export class MusicPlugin implements EntryPlugin {
       {
         label: "Play Music",
         icon: playIcon(),
-        handler: this.onOpen.bind(this),
+        handler: async (entry, contextPromise) => {
+          if (entry.kind !== "directory") {
+            this.playerBar.play(entry, contextPromise);
+          }
+        },
+        requiresContext: true,
       },
     ];
-  }
-
-  public async onOpen(entry: Entry) {
-    if (entry.kind === "file") {
-      const file = await entry.getFile();
-      this.playerBar.play(file);
-    }
   }
 }

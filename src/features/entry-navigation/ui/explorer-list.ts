@@ -3,10 +3,10 @@ import { Entry } from "@/shared/api/file-system/types";
 import { pluginManager } from "@/shared/api/file-system/plugin-manager";
 import { contextMenu } from "@/shared/ui/context-menu";
 import { folderIcon, fileIcon } from "@/shared/ui/icons";
+import { ExtractState } from "zustand";
 
 export class ExplorerList {
   private container: HTMLDivElement;
-  private entries: Entry[] = [];
   private filteredEntries: Entry[] = [];
   private unsubscribe: () => void;
 
@@ -17,9 +17,10 @@ export class ExplorerList {
       if (
         state.searchQuery !== prevState.searchQuery ||
         state.viewMode !== prevState.viewMode ||
-        state.isLoading !== prevState.isLoading
+        state.isLoading !== prevState.isLoading ||
+        state.entries !== prevState.entries
       ) {
-        this.render();
+        this.render(state);
       }
     });
 
@@ -30,18 +31,14 @@ export class ExplorerList {
     );
   }
 
-  public setEntries(entries: Entry[]) {
-    this.entries = entries;
-  }
-
-  private render() {
-    const { searchQuery, viewMode, isLoading } = entryStore.getState();
+  private render(state: ExtractState<typeof entryStore>) {
+    const { searchQuery, viewMode, isLoading, entries } = state;
     if (isLoading) {
       this.container.innerHTML = this.getLoadingTemplate();
       return;
     }
 
-    this.filteredEntries = this.entries.filter((entry) =>
+    this.filteredEntries = entries.filter((entry) =>
       entry.name.toLowerCase().includes(searchQuery.toLowerCase()),
     );
 
@@ -105,14 +102,15 @@ export class ExplorerList {
     const target = (e.target as HTMLElement).closest("[data-id]");
     if (!target) return;
 
-    const handle = this.filteredEntries[Number(target.getAttribute("data-id"))];
+    const index = Number(target.getAttribute("data-id"));
+    const handle = this.filteredEntries[index];
     if (!handle) return;
 
     if (handle.kind === "directory") {
       const event = new CustomEvent("explorer:cd", { detail: handle });
       window.dispatchEvent(event);
     } else {
-      pluginManager.onOpen(handle, this.entries);
+      pluginManager.handleDefaultAction(this.filteredEntries, index);
     }
   }
 
@@ -121,11 +119,12 @@ export class ExplorerList {
     const target = (e.target as HTMLElement).closest("[data-id]");
     if (!target) return;
 
-    const handle = this.filteredEntries[Number(target.getAttribute("data-id"))];
+    const index = Number(target.getAttribute("data-id"));
+    const handle = this.filteredEntries[index];
     if (!handle) return;
 
     const actions = pluginManager.getActionsForEntry(handle);
-    contextMenu.show(e.clientX, e.clientY, actions, handle, this.entries);
+    contextMenu.show(e, actions, this.filteredEntries, index);
   }
 
   private getEmptyTemplate() {

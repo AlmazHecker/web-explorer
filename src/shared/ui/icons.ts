@@ -44,6 +44,11 @@ export const musicIcon = (o: SvgOptions = {}): string => {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="${className}"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`;
 };
 
+export const xIcon = (o: SvgOptions = {}): string => {
+  const { width = 24, height = 24, className = "" } = o;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="${className}"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>`;
+};
+
 export const pauseIcon = (o: SvgOptions = {}): string => {
   const { width = 24, height = 24, className = "" } = o;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="${className}"><rect x="14" y="3" width="5" height="18" rx="1"/><rect x="5" y="3" width="5" height="18" rx="1"/></svg>`;
@@ -112,4 +117,9 @@ export const arrowLeftIcon = (o: SvgOptions = {}): string => {
 export const chevronRightIcon = (o: SvgOptions = {}): string => {
   const { width = 16, height = 16, className = "" } = o;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="${className}"><path d="m9 18 6-6-6-6"/></svg>`;
+};
+
+export const chevronLeftIcon = (o: SvgOptions = {}): string => {
+  const { width = 16, height = 16, className = "" } = o;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="${className}"><path d="m15 18-6-6 6-6"/></svg>`;
 };

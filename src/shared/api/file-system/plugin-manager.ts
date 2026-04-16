@@ -1,4 +1,4 @@
-import { Entry, EntryPlugin, PluginAction } from "./types";
+import { PluginContext, Entry, EntryPlugin, PluginAction } from "./types";
 
 class PluginManager {
   private plugins: EntryPlugin[] = [];
@@ -18,13 +18,12 @@ class PluginManager {
   public getPluginForEntry(entry: Entry): EntryPlugin | null {
     if (entry.kind === "directory") return null;
 
-    const name = entry.name.toLowerCase();
-    const extension = name.split(".").pop() || "";
+    const name = entry.name;
+    const dotIndex = name.lastIndexOf(".");
+    if (dotIndex <= 0) return null;
+    const ext = name.slice(dotIndex + 1).toLowerCase();
 
-    return (
-      this.plugins.find((p) => p.supportedExtensions?.includes(extension)) ||
-      null
-    );
+    return this.plugins.find((p) => p.extensions.has(ext)) || null;
   }
 
   public getIconForEntry(entry: Entry): string | null {
@@ -37,14 +36,60 @@ class PluginManager {
     return plugin?.getActions?.(entry) || [];
   }
 
-  public onOpen(entry: Entry, entries: Entry[]) {
-    const plugin = this.getPluginForEntry(entry);
+  public executeAction(action: PluginAction, entries: Entry[], at: number) {
+    const targetEntry = entries[at];
+    // plugin constant should be either passed as param or obtained in some other way
+    // Currently we are recomputing plugin for each action
+    const plugin = this.getPluginForEntry(targetEntry);
+    if (!plugin) return;
 
-    const availableEntries = entries.filter((e) => {
-      if (e.kind !== "file") return false;
-      return plugin?.supportedExtensions?.some((ext) => e.name.endsWith(ext));
+    if (action.requiresContext) {
+      const contextPromise = this.getContextEntries(
+        entries,
+        at,
+        plugin.extensions,
+      );
+      return action.handler(targetEntry, contextPromise);
+    }
+    return action.handler(targetEntry);
+  }
+
+  public handleDefaultAction(entries: Entry[], at: number) {
+    const actions = this.getActionsForEntry(entries[at]);
+    if (actions.length > 0) {
+      this.executeAction(actions[0], entries, at);
+    }
+  }
+
+  private getContextEntries(
+    entries: Entry[],
+    at: number,
+    extensions: Set<string>,
+  ): Promise<PluginContext> {
+    return new Promise((resolve) => {
+      let relativeIndex = -1;
+      let counter = 0;
+
+      const filteredEntries = entries.filter((e, index) => {
+        if (e.kind !== "file") return false;
+
+        const name = e.name;
+        const dotIndex = name.lastIndexOf(".");
+        if (dotIndex <= 0) return false;
+
+        const ext = name.slice(dotIndex + 1).toLowerCase();
+        const isSupported = extensions.has(ext);
+
+        if (isSupported) {
+          if (index === at) relativeIndex = counter;
+          counter++;
+          return true;
+        }
+        return false;
+      });
+
+      resolve({ entries: filteredEntries, relativeIndex });
     });
-    plugin?.onOpen(entry, availableEntries);
   }
 }
 

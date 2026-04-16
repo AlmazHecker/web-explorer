@@ -1,3 +1,4 @@
+import { PluginContext } from "@/shared/api/file-system/types";
 import { VideoViewer } from "./video-viewer";
 
 export class VideoPlayerBar {
@@ -38,7 +39,8 @@ export class VideoPlayerBar {
     const entry = this.queue[index];
     const file = await entry.getFile();
 
-    this.videoViewer.open(file);
+    const context = { entries: this.queue, relativeIndex: index };
+    this.videoViewer.open(file, context);
     this.render();
   }
 
@@ -59,7 +61,6 @@ export class VideoPlayerBar {
     if (exists) return;
 
     this.queue.push(entry);
-    if (this.queue.length === 1) this.playAt(0);
     this.render();
   }
 
