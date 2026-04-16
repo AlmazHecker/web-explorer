@@ -9,9 +9,9 @@ import { ExplorerBreadcrumbs } from "@/features/entry-navigation/ui/explorer-bre
 
 export class EntryExplorer {
   private container: HTMLDivElement;
-  private toolbar?: ExplorerToolbar;
-  private list?: ExplorerList;
-  private breadcrumbs?: ExplorerBreadcrumbs;
+  private toolbar!: ExplorerToolbar;
+  private list!: ExplorerList;
+  private breadcrumbs!: ExplorerBreadcrumbs;
 
   constructor(container: HTMLDivElement) {
     this.container = container;
@@ -52,10 +52,11 @@ export class EntryExplorer {
       | FileSystemDirectoryHandle[]
       | FileSystemDirectoryHandle,
   ) {
-    const { setIsLoading, setHistory, setEntries, history } =
-      entryStore.getState();
+    const list = this.container.querySelector("#explorer-list-container")!;
+
+    const { setHistory, setEntries, history } = entryStore.getState();
     try {
-      setIsLoading(true);
+      list.innerHTML = this.getLoadingTemplate();
 
       if (target instanceof FileSystemDirectoryHandle) {
         target = [...history, target];
@@ -78,32 +79,32 @@ export class EntryExplorer {
 
       setEntries(entries);
     } catch (error) {
-      if (error === "not granted") {
-        this.renderNoPermission();
+      if (error instanceof Error && error.name === "NotAllowedError") {
+        list.innerHTML = this.getNoPermissionTemplate();
         return;
       }
       console.error("Failed to read directory:", error);
-    } finally {
-      setIsLoading(false);
     }
   }
 
-  private renderNoPermission() {
-    const listContainer = this.container.querySelector(
-      "#explorer-list-container",
-    );
-    if (!listContainer) return;
-
-    listContainer.innerHTML = `
+  private getNoPermissionTemplate() {
+    return `
       <div class="flex flex-col items-center justify-center h-full text-muted-foreground gap-4 p-8 text-center">
-        <div class="size-16 opacity-20">
-          <span class="size-full">${folderIcon()}</span>
-        </div>
+          <span>${folderIcon({ className: "size-40 opacity-20" })}</span>
         <div>
            <p class="text-lg font-bold">Permission Required</p>
-           <p class="text-sm opacity-70">Please click 'Load Folder' to authorize access to your library.</p>
+           <p class="text-sm opacity-70">Please click 'Load Folder' to start.</p>
         </div>
       </div>
+    `;
+  }
+
+  private getLoadingTemplate() {
+    return `
+      <div class="flex flex-col items-center justify-center h-48 gap-2 text-primary">
+        <span class="loading loading-ring loading-xl"></span>
+        <p class="text-sm font-medium animate-pulse">Parsing directory...</p>
+      </div>  
     `;
   }
 

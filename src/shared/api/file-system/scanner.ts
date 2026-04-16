@@ -15,7 +15,7 @@ export const scanDirectory = async (
   if (target === "LAST") {
     const saved = await get<FileSystemDirectoryHandle[]>(ROOT_HANDLE_KEY);
 
-    if (!saved) throw "No saved handle found";
+    if (!saved) throw new Error("not granted");
 
     handleHistory = saved;
   } else if (target === "NEW") {

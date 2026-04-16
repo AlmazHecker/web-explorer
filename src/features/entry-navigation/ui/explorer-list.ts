@@ -17,7 +17,6 @@ export class ExplorerList {
       if (
         state.searchQuery !== prevState.searchQuery ||
         state.viewMode !== prevState.viewMode ||
-        state.isLoading !== prevState.isLoading ||
         state.entries !== prevState.entries
       ) {
         this.render(state);
@@ -32,11 +31,7 @@ export class ExplorerList {
   }
 
   private render(state: ExtractState<typeof entryStore>) {
-    const { searchQuery, viewMode, isLoading, entries } = state;
-    if (isLoading) {
-      this.container.innerHTML = this.getLoadingTemplate();
-      return;
-    }
+    const { searchQuery, viewMode, entries } = state;
 
     this.filteredEntries = entries.filter((entry) =>
       entry.name.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -129,19 +124,10 @@ export class ExplorerList {
 
   private getEmptyTemplate() {
     return `
-      <div class="flex flex-col items-center justify-center h-48 gap-2 opacity-50">
-        ${fileIcon({ className: "mx-auto size-1/5" })}
-        <p class="text-sm font-medium">No items</p>
+      <div class="flex flex-col items-center justify-center h-full gap-4">
+        ${fileIcon({ className: "opacity-20 size-40" })}
+        <p class="text-lg font-bold">No items</p>
       </div>
-    `;
-  }
-
-  private getLoadingTemplate() {
-    return `
-      <div class="flex flex-col items-center justify-center h-48 gap-2 text-primary">
-        <span class="loading loading-ring loading-xl"></span>
-        <p class="text-sm font-medium animate-pulse">Parsing directory...</p>
-      </div>  
     `;
   }
 

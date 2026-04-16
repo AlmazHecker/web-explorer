@@ -7,11 +7,9 @@ import { createJSONStorage, persist } from "zustand/middleware";
 interface EntryStore {
   entries: Entry[];
   history: FileSystemDirectoryHandle[];
-  isLoading: boolean;
   searchQuery: string;
   viewMode: "list" | "grid";
   setEntries: (entries: Entry[]) => void;
-  setIsLoading: (isLoading: boolean) => void;
   setSearchQuery: (query: string) => void;
   setViewMode: (mode: "list" | "grid") => void;
   setHistory: (root: FileSystemDirectoryHandle[]) => void;
@@ -27,7 +25,6 @@ export const entryStore = createStore<EntryStore>()(
       viewMode: "list",
 
       setEntries: (entries) => set({ entries }),
-      setIsLoading: (isLoading) => set({ isLoading }),
       setSearchQuery: (searchQuery) => set({ searchQuery }),
       setViewMode: (viewMode) => set({ viewMode }),
 
