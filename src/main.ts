@@ -7,7 +7,7 @@ import { ImagePlugin } from "./features/plugins/image-plugin";
 
 export const PLUGIN_SLOTS_ROOT = "plugin-slots-root";
 
-const bootstrapApp = async () => {
+const bootstrapApp = () => {
   const theme = localStorage.getItem("theme");
   if (theme) {
     document.documentElement.setAttribute("data-theme", theme);
@@ -47,5 +47,24 @@ bootstrapApp();
 if ("serviceWorker" in navigator && !import.meta.env.DEV) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register(`${import.meta.env.BASE_URL}sw.js`);
+  });
+}
+
+if ("launchQueue" in window && window.launchQueue) {
+  window.launchQueue.setConsumer(async (launchParams) => {
+    if (launchParams.files.length > 0) {
+      const fileHandle = launchParams.files[0];
+      if (fileHandle.kind === "directory") {
+        return alert("not supported yet...");
+      }
+      const file = await (fileHandle as FileSystemFileHandle).getFile();
+
+      const plugin = pluginManager.getPluginForEntry(file as File);
+      if (plugin?.handleSystemIntent) {
+        plugin.handleSystemIntent(file);
+      } else {
+        alert("No handler found...");
+      }
+    }
   });
 }

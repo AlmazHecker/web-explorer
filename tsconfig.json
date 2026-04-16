@@ -9,7 +9,11 @@
     },
     "jsx": "react-jsx",
     "jsxImportSource": "react",
-    "types": ["@types/wicg-file-system-access", "vite/client"],
+    "types": [
+      "@types/wicg-file-system-access",
+      "@types/wicg-web-app-launch",
+      "vite/client"
+    ],
     "esModuleInterop": true,
     "moduleResolution": "Bundler",
     "module": "ES2022",

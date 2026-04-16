@@ -38,4 +38,8 @@ export class ImagePlugin implements EntryPlugin {
       },
     ];
   }
+
+  public handleSystemIntent(file: File) {
+    return this.imageViewer.open(file);
+  }
 }

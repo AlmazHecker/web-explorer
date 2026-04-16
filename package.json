@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.17",
+    "@types/wicg-web-app-launch": "^2023.1.4",
     "daisyui": "^5.5.19",
     "idb-keyval": "^6.2.2",
     "taglib-wasm": "^1.1.2",

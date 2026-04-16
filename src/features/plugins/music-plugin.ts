@@ -34,4 +34,8 @@ export class MusicPlugin implements EntryPlugin {
       },
     ];
   }
+
+  public handleSystemIntent(file: File) {
+    return this.playerBar.play(file);
+  }
 }

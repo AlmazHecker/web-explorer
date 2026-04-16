@@ -34,4 +34,6 @@ export interface EntryPlugin {
   initialize?(rootSlot: HTMLElement): void;
   getIcon?(entry: Entry): string | null;
   getActions?(entry: Entry): PluginAction[];
+  // special action for handling system intents ("Open With" option on OS context menu)
+  handleSystemIntent?(file: File): void;
 }

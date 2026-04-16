@@ -60,4 +60,8 @@ export class VideoPlugin implements EntryPlugin {
       },
     ];
   }
+
+  public handleSystemIntent(file: File) {
+    return this.videoViewer.open(file);
+  }
 }
