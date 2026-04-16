@@ -112,7 +112,7 @@ export class ExplorerList {
       const event = new CustomEvent("explorer:cd", { detail: handle });
       window.dispatchEvent(event);
     } else {
-      pluginManager.onOpen(handle);
+      pluginManager.onOpen(handle, this.entries);
     }
   }
 
@@ -125,7 +125,7 @@ export class ExplorerList {
     if (!handle) return;
 
     const actions = pluginManager.getActionsForEntry(handle);
-    contextMenu.show(e.clientX, e.clientY, actions, handle);
+    contextMenu.show(e.clientX, e.clientY, actions, handle, this.entries);
   }
 
   private getEmptyTemplate() {

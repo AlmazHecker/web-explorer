@@ -1,3 +1,6 @@
+import { Entry } from "@/shared/api/file-system/types";
+import { arrowLeftIcon } from "@/shared/ui/icons";
+
 export class VideoViewer {
   private container: HTMLElement;
   private dialog: HTMLDialogElement;
@@ -14,7 +17,9 @@ export class VideoViewer {
         <video id="plugin-video-player" loop controls autoplay class="w-full aspect-video"></video>
       </div>
       <form method="dialog" class="modal-backdrop">
-        <button id="modal-close-btn">close</button>
+        <button id="modal-close-btn">close
+        ${arrowLeftIcon()}
+        </button>
       </form>
     </dialog>
     `;
@@ -24,7 +29,7 @@ export class VideoViewer {
     this.dialog.addEventListener("close", this.onClose.bind(this));
   }
 
-  public async open(file: File) {
+  public async open(file: File, entries: Entry[]) {
     this.video.src = "";
     if (!this.dialog.open) {
       this.dialog.showModal();

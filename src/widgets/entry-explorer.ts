@@ -31,7 +31,7 @@ export class EntryExplorer {
     this.container.innerHTML = `
       <div id="explorer-toolbar-container"></div>
       <div id="explorer-breadcrumbs-container"></div>
-<div id="explorer-list-container" class="flex-1 overflow-y-auto overflow-x-hidden"></div>    `;
+<div id="explorer-list-container" class="flex-1 overflow-y-auto overflow-x-hidden"></div>`;
 
     this.breadcrumbs = new ExplorerBreadcrumbs(
       this.container.querySelector("#explorer-breadcrumbs-container")!,

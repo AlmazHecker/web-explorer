@@ -3,7 +3,7 @@ export type Entry = FileSystemDirectoryHandle | FileSystemFileHandle;
 export interface PluginAction {
   label: string;
   icon?: string;
-  handler: (entry: Entry) => void;
+  handler: (entry: Entry, entries: Entry[]) => void;
 }
 
 export interface EntryPlugin {
@@ -15,5 +15,5 @@ export interface EntryPlugin {
   getIcon?(entry: Entry): string | null;
   getActions?(entry: Entry): PluginAction[];
   getSlotView?(slotName: string): { new (container: HTMLElement): any } | null;
-  onOpen?(entry: Entry): void;
+  onOpen(entry: Entry, entries: Entry[]): void;
 }

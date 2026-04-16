@@ -2,10 +2,10 @@ import { createStore } from "zustand/vanilla";
 import { Entry } from "@/shared/api/file-system/types";
 import { set as IDBSet } from "idb-keyval";
 import { ROOT_HANDLE_KEY } from "@/shared/api/file-system/scanner";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 interface EntryStore {
   entries: Entry[];
-  activeDirectory: FileSystemDirectoryHandle | null;
   history: FileSystemDirectoryHandle[];
   isLoading: boolean;
   searchQuery: string;
@@ -17,21 +17,32 @@ interface EntryStore {
   setHistory: (root: FileSystemDirectoryHandle[]) => void;
 }
 
-export const entryStore = createStore<EntryStore>((set, get) => ({
-  entries: [],
-  activeDirectory: null,
-  history: [],
-  isLoading: false,
-  searchQuery: "",
-  viewMode: "list",
+export const entryStore = createStore<EntryStore>()(
+  persist(
+    (set, get) => ({
+      entries: [],
+      history: [],
+      isLoading: false,
+      searchQuery: "",
+      viewMode: "list",
 
-  setEntries: (entries) => set({ entries }),
-  setIsLoading: (isLoading) => set({ isLoading }),
-  setSearchQuery: (searchQuery) => set({ searchQuery }),
-  setViewMode: (viewMode) => set({ viewMode }),
+      setEntries: (entries) => set({ entries }),
+      setIsLoading: (isLoading) => set({ isLoading }),
+      setSearchQuery: (searchQuery) => set({ searchQuery }),
+      setViewMode: (viewMode) => set({ viewMode }),
 
-  setHistory: (history) => {
-    IDBSet(ROOT_HANDLE_KEY, history);
-    set({ history, searchQuery: "" });
-  },
-}));
+      setHistory: (history) => {
+        IDBSet(ROOT_HANDLE_KEY, history);
+        set({ history });
+      },
+    }),
+    {
+      name: "entry-store",
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({
+        viewMode: state.viewMode,
+        searchQuery: state.searchQuery,
+      }),
+    },
+  ),
+);

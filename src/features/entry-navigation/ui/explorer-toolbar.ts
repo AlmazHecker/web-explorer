@@ -18,10 +18,15 @@ export class ExplorerToolbar {
     this.container.addEventListener("input", this.handleSearchInput.bind(this));
   }
 
+  private searchTimeout!: NodeJS.Timeout;
+
   private handleSearchInput(e: Event) {
     const target = e.target as HTMLInputElement;
     if (target.id === "explorer-search") {
-      entryStore.getState().setSearchQuery(target.value);
+      clearTimeout(this.searchTimeout);
+      this.searchTimeout = setTimeout(() => {
+        entryStore.getState().setSearchQuery(target.value);
+      }, 200);
     }
   }
 
@@ -33,7 +38,7 @@ export class ExplorerToolbar {
         <div class="relative flex-1 min-w-[200px]">
           <input 
             id="explorer-search"
-            type="text" 
+            type="search" 
             placeholder="Search in folder..." 
             value="${searchQuery}"
             class="input"

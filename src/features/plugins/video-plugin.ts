@@ -45,7 +45,7 @@ export class VideoPlugin implements EntryPlugin {
       {
         label: "Add to Queue",
         icon: plusIcon(),
-        handler: (entry: Entry) => {
+        handler: (entry: Entry, entries: Entry[]) => {
           if (entry.kind === "file") {
             this.videoPlayerBar.addToQueue(entry);
           }
@@ -54,10 +54,10 @@ export class VideoPlugin implements EntryPlugin {
     ];
   }
 
-  public async onOpen(entry: Entry) {
+  public async onOpen(entry: Entry, entries: Entry[]) {
     if (entry.kind === "file") {
       const file = await entry.getFile();
-      this.videoViewer.open(file);
+      this.videoViewer.open(file, entries);
     }
   }
 }

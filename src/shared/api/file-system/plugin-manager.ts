@@ -37,9 +37,14 @@ class PluginManager {
     return plugin?.getActions?.(entry) || [];
   }
 
-  public onOpen(entry: Entry) {
+  public onOpen(entry: Entry, entries: Entry[]) {
     const plugin = this.getPluginForEntry(entry);
-    plugin?.onOpen?.(entry);
+
+    const availableEntries = entries.filter((e) => {
+      if (e.kind !== "file") return false;
+      return plugin?.supportedExtensions?.some((ext) => e.name.endsWith(ext));
+    });
+    plugin?.onOpen(entry, availableEntries);
   }
 }
 

@@ -18,7 +18,13 @@ export class ContextMenu {
     });
   }
 
-  public show(x: number, y: number, actions: PluginAction[], entry: Entry) {
+  public show(
+    x: number,
+    y: number,
+    actions: PluginAction[],
+    entry: Entry,
+    entries: Entry[],
+  ) {
     if (actions.length === 0) return;
 
     this.container.innerHTML = actions
@@ -37,7 +43,7 @@ export class ContextMenu {
     this.container.querySelectorAll("[data-id]").forEach((btn) => {
       btn.addEventListener("click", () => {
         const index = parseInt(btn.getAttribute("data-id")!, 10);
-        actions[index].handler(entry);
+        actions[index].handler(entry, entries);
         this.hide();
       });
     });
