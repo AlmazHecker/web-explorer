@@ -2,7 +2,7 @@
   "name": "explorer",
   "type": "module",
   "version": "0.0.1",
-  "homepage": "https://AlmazHecker.github.io/explorer",
+  "homepage": "https://AlmazHecker.github.io/web-explorer",
   "scripts": {
     "dev": "vite dev --host",
     "build": "tsc && vite build",
