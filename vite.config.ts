@@ -5,7 +5,7 @@ import { dynamicManifestPlugin } from "./vite-plugins/dynamicManifest";
 import { getAppManifest } from "./pwa/manifest";
 
 export default defineConfig(({ mode }) => {
-  const BASE = mode === "gh-pages" ? "/explorer/" : "/";
+  const BASE = mode === "gh-pages" ? "/web-explorer/" : "/";
 
   return {
     worker: {
