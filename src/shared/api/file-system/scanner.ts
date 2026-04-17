@@ -15,7 +15,7 @@ export const scanDirectory = async (
   if (target === "LAST") {
     const saved = await get<FileSystemDirectoryHandle[]>(ROOT_HANDLE_KEY);
 
-    if (!saved) throw new Error("not granted");
+    if (!saved) throw new DOMException("not granted", "NotAllowedError");
 
     handleHistory = saved;
   } else if (target === "NEW") {
