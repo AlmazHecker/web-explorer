@@ -1,0 +1,56 @@
+{
+  "name": "Explorer",
+  "id": "explorer",
+  "short_name": "Explorer",
+  "description": "Explorer, explore your files",
+  "start_url": "/explorer/",
+  "display": "standalone",
+  "categories": [
+    "music",
+    "utilities"
+  ],
+  "scope": "/explorer/",
+  "icons": [
+    {
+      "src": "/explorer/android-chrome-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/explorer/android-chrome-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/explorer/android-chrome-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/explorer/android-chrome-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/explorer/screenshot-wide.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/explorer/screenshot-narrow.png",
+      "sizes": "720x599",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "edge_side_panel": {
+    "preferred_width": 480
+  }
+}
