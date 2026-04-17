@@ -4,7 +4,7 @@
   src: url("/fonts/GeistMono-Thin.ttf") format("truetype");
   font-weight: 100;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }
 
 /* ExtraLight */
@@ -13,7 +13,7 @@
   src: url("/fonts/GeistMono-ExtraLight.ttf") format("truetype");
   font-weight: 200;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }
 
 /* Light */
@@ -22,7 +22,7 @@
   src: url("/fonts/GeistMono-Light.ttf") format("truetype");
   font-weight: 300;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }
 
 /* Regular */
@@ -31,7 +31,7 @@
   src: url("/fonts/GeistMono-Regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }
 
 /* Medium */
@@ -40,7 +40,7 @@
   src: url("/fonts/GeistMono-Medium.ttf") format("truetype");
   font-weight: 500;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }
 
 /* SemiBold */
@@ -49,7 +49,7 @@
   src: url("/fonts/GeistMono-SemiBold.ttf") format("truetype");
   font-weight: 600;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }
 
 /* Bold */
@@ -58,7 +58,7 @@
   src: url("/fonts/GeistMono-Bold.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }
 
 /* ExtraBold */
@@ -67,7 +67,7 @@
   src: url("/fonts/GeistMono-ExtraBold.ttf") format("truetype");
   font-weight: 800;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }
 
 /* Black */
@@ -76,5 +76,5 @@
   src: url("/fonts/GeistMono-Black.ttf") format("truetype");
   font-weight: 900;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }
