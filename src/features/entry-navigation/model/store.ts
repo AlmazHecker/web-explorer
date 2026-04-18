@@ -1,7 +1,10 @@
 import { createStore } from "zustand/vanilla";
 import { Entry } from "@/shared/api/file-system/types";
-import { set as IDBSet } from "idb-keyval";
-import { ROOT_HANDLE_KEY } from "@/shared/api/file-system/scanner";
+import { set as IDBSet, get as IDBGet } from "idb-keyval";
+import {
+  ROOT_HANDLE_KEY,
+  scanDirectory,
+} from "@/shared/api/file-system/scanner";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 interface EntryStore {
@@ -13,6 +16,13 @@ interface EntryStore {
   setSearchQuery: (query: string) => void;
   setViewMode: (mode: "list" | "grid") => void;
   setHistory: (root: FileSystemDirectoryHandle[]) => void;
+
+  isLoading: boolean;
+
+  navigateTo: (target: FileSystemDirectoryHandle[]) => Promise<void>;
+  cdInto: (target: FileSystemDirectoryHandle) => void;
+  requestDirectory: (target: "NEW" | "LAST") => Promise<void>;
+  error: unknown;
 }
 
 export const entryStore = createStore<EntryStore>()(
@@ -23,14 +33,64 @@ export const entryStore = createStore<EntryStore>()(
       isLoading: false,
       searchQuery: "",
       viewMode: "list",
+      error: null,
 
       setEntries: (entries) => set({ entries }),
       setSearchQuery: (searchQuery) => set({ searchQuery }),
       setViewMode: (viewMode) => set({ viewMode }),
 
       setHistory: (history) => {
-        IDBSet(ROOT_HANDLE_KEY, history);
         set({ history });
+      },
+
+      requestDirectory: async (target) => {
+        try {
+          let handle: FileSystemDirectoryHandle[] | null = null;
+          if (target === "NEW") {
+            handle = [await window.showDirectoryPicker({ mode: "read" })];
+          } else {
+            handle =
+              (await IDBGet<FileSystemDirectoryHandle[]>(ROOT_HANDLE_KEY)) ||
+              [];
+          }
+
+          return get().navigateTo(handle);
+        } catch (error) {
+          set({ error });
+        }
+      },
+
+      navigateTo: async (target: FileSystemDirectoryHandle[]) => {
+        try {
+          set({ isLoading: true });
+          const { setEntries, setHistory } = get();
+          if (!target || target.length === 0) return;
+          setHistory(target);
+          IDBSet(ROOT_HANDLE_KEY, target);
+
+          const entries: Entry[] = [];
+          for await (const handle of target[target.length - 1].values()) {
+            entries.push(handle);
+          }
+
+          entries.sort((a, b) => {
+            if (a.kind === "directory" && b.kind === "file") return -1;
+            if (a.kind === "file" && b.kind === "directory") return 1;
+            return a.name.localeCompare(b.name);
+          });
+
+          setEntries(entries);
+        } catch (error) {
+          set({ error });
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      cdInto: (target: FileSystemDirectoryHandle) => {
+        const { history } = get();
+        const newHistory = [...history, target];
+        return get().navigateTo(newHistory);
       },
     }),
     {

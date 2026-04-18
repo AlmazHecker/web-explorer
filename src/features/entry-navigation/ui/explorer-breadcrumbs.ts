@@ -80,7 +80,7 @@ export class ExplorerBreadcrumbs {
   }
 
   private dispatchNavigation(handle: FileSystemDirectoryHandle[]) {
-    window.dispatchEvent(new CustomEvent("explorer:cd", { detail: handle }));
+    entryStore.getState().navigateTo(handle);
   }
 
   destroy() {

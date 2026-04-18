@@ -1,8 +1,5 @@
-import {
-  Entry,
-  EntryPlugin,
-  PluginAction,
-} from "@/shared/api/file-system/types";
+import { Entry } from "@/shared/api/file-system/types";
+import { EntryPlugin, PluginAction } from "@/shared/api/plugin/types";
 import { PlayerBar } from "./music/ui/music-player-bar";
 import { musicIcon, playIcon } from "@/shared/ui/icons";
 

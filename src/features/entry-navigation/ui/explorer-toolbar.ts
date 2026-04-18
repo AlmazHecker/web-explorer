@@ -1,36 +1,33 @@
 import { entryStore } from "@/features/entry-navigation/model/store";
 import { gridIcon, listIcon } from "@/shared/ui/icons";
+import { ExtractState } from "zustand";
 
 export class ExplorerToolbar {
-  private container: HTMLDivElement;
   private unsubscribe: () => void;
+  private searchTimeout!: NodeJS.Timeout;
 
-  constructor(container: HTMLDivElement) {
-    this.container = container;
-    this.render();
+  private listBtn: HTMLButtonElement;
+  private gridBtn: HTMLButtonElement;
+
+  constructor(private readonly container: HTMLDivElement) {
+    this.setupInitialUI();
+
+    this.listBtn = this.container.querySelector("#view-list-btn")!;
+    this.gridBtn = this.container.querySelector("#view-grid-btn")!;
 
     this.unsubscribe = entryStore.subscribe((state, prevState) => {
-      if (state.viewMode !== prevState.viewMode) {
-        this.render();
+      if (
+        state.viewMode !== prevState.viewMode ||
+        state.searchQuery !== prevState.searchQuery
+      ) {
+        this.updateViewMode(state);
       }
     });
 
-    this.container.addEventListener("input", this.handleSearchInput.bind(this));
+    this.bindEvents();
   }
 
-  private searchTimeout!: NodeJS.Timeout;
-
-  private handleSearchInput(e: Event) {
-    const target = e.target as HTMLInputElement;
-    if (target.id === "explorer-search") {
-      clearTimeout(this.searchTimeout);
-      this.searchTimeout = setTimeout(() => {
-        entryStore.getState().setSearchQuery(target.value);
-      }, 200);
-    }
-  }
-
-  private render() {
+  private setupInitialUI() {
     const { searchQuery, viewMode } = entryStore.getState();
 
     this.container.innerHTML = `
@@ -41,40 +38,54 @@ export class ExplorerToolbar {
             type="search" 
             placeholder="Search in folder..." 
             value="${searchQuery}"
-            class="input"
+            class="input input-sm w-full outline-none"
           />
         </div>
-
-        <div class="flex items-center gap-1">
-          <div class="join">
-            <button 
-              id="view-list-btn"
-              class="btn btn-sm btn-ghost join-item px-2 ${viewMode === "list" ? "bg-base-100 shadow-sm text-primary" : "opacity-40"}"
-            >
-              ${listIcon()}
-            </button>
-            <button 
-              id="view-grid-btn"
-              class="btn btn-sm btn-ghost join-item px-2 ${viewMode === "grid" ? "bg-base-100 shadow-sm text-primary" : "opacity-40"}"
-            >
-              ${gridIcon()}
-            </button>
-          </div>
+        <div class="join">
+          <button id="view-list-btn" class="btn ${viewMode === "list" ? "bg-base-100 shadow-sm text-primary" : "opacity-40"} btn-sm btn-ghost join-item px-2">
+            ${listIcon()}
+          </button>
+          <button id="view-grid-btn" class="btn ${viewMode === "grid" ? "bg-base-100 shadow-sm text-primary" : "opacity-40"} btn-sm btn-ghost join-item px-2">
+            ${gridIcon()}
+          </button>
         </div>
       </div>
     `;
+  }
 
-    this.container
-      .querySelector("#view-list-btn")
-      ?.addEventListener("click", () => {
+  private updateViewMode(state: ExtractState<typeof entryStore>) {
+    const isList = state.viewMode === "list";
+
+    const active = ["bg-base-100", "shadow-sm", "text-primary"];
+
+    this.listBtn.classList.toggle("opacity-40", !isList);
+    this.gridBtn.classList.toggle("opacity-40", isList);
+
+    active.forEach((cls) => {
+      this.listBtn.classList.toggle(cls, isList);
+      this.gridBtn.classList.toggle(cls, !isList);
+    });
+  }
+
+  private bindEvents() {
+    this.container.addEventListener("click", (e) => {
+      const target = e.target as HTMLElement;
+      if (target.closest("#view-list-btn")) {
         entryStore.getState().setViewMode("list");
-      });
-
-    this.container
-      .querySelector("#view-grid-btn")
-      ?.addEventListener("click", () => {
+      } else if (target.closest("#view-grid-btn")) {
         entryStore.getState().setViewMode("grid");
-      });
+      }
+    });
+
+    this.container.addEventListener("input", (e) => {
+      const target = e.target as HTMLInputElement;
+      if (target.id === "explorer-search") {
+        clearTimeout(this.searchTimeout);
+        this.searchTimeout = setTimeout(() => {
+          entryStore.getState().setSearchQuery(target.value);
+        }, 200);
+      }
+    });
   }
 
   destroy() {

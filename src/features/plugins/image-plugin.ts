@@ -1,9 +1,5 @@
-import {
-  Entry,
-  EntryPlugin,
-  PluginAction,
-  PluginContext,
-} from "@/shared/api/file-system/types";
+import { Entry } from "@/shared/api/file-system/types";
+import { EntryPlugin, PluginAction } from "@/shared/api/plugin/types";
 import { playIcon, imageIcon } from "@/shared/ui/icons";
 import { ImageViewer } from "./image/ui/image-viewer";
 

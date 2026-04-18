@@ -1,3 +1,4 @@
+import { entryStore } from "@/features/entry-navigation/model/store";
 import { ThemeToggle } from "./theme-toggle";
 import { folderOpenIcon } from "@/shared/ui/icons";
 
@@ -8,6 +9,12 @@ export class Header {
     this.container = container;
     this.render();
     new ThemeToggle(this.container.querySelector("#theme-toggle-container")!);
+
+    document
+      .getElementById("load-folder-btn")
+      ?.addEventListener("click", () =>
+        entryStore.getState().requestDirectory("NEW"),
+      );
   }
 
   render() {

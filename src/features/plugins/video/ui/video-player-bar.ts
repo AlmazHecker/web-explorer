@@ -1,4 +1,4 @@
-import { PluginContext } from "@/shared/api/file-system/types";
+import { PluginContext } from "@/shared/api/plugin/types";
 import { VideoViewer } from "./video-viewer";
 
 export class VideoPlayerBar {

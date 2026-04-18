@@ -1,5 +1,6 @@
-import { Entry, PluginAction } from "@/shared/api/file-system/types";
-import { pluginManager } from "../api/file-system/plugin-manager";
+import { Entry } from "@/shared/api/file-system/types";
+import { pluginManager } from "@/shared/api/plugin/plugin-manager";
+import { PluginAction } from "@/shared/api/plugin/types";
 
 export class ContextMenu {
   private container: HTMLUListElement;

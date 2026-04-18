@@ -11,7 +11,8 @@ import {
   musicIcon,
   xIcon,
 } from "@/shared/ui/icons";
-import { PluginContext, Entry } from "@/shared/api/file-system/types";
+import { Entry } from "@/shared/api/file-system/types";
+import { PluginContext } from "@/shared/api/plugin/types";
 
 export class PlayerBar {
   private container: HTMLElement;

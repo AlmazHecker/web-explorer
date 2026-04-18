@@ -1,9 +1,5 @@
-import {
-  Entry,
-  EntryPlugin,
-  PluginAction,
-  PluginContext,
-} from "@/shared/api/file-system/types";
+import { Entry } from "@/shared/api/file-system/types";
+import { EntryPlugin, PluginAction } from "@/shared/api/plugin/types";
 import { playIcon, plusIcon, videoIcon } from "@/shared/ui/icons";
 import { VideoViewer } from "./video/ui/video-viewer";
 import { VideoPlayerBar } from "./video/ui/video-player-bar";

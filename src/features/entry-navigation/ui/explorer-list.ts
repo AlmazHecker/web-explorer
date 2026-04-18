@@ -1,6 +1,6 @@
 import { entryStore } from "@/features/entry-navigation/model/store";
 import { Entry } from "@/shared/api/file-system/types";
-import { pluginManager } from "@/shared/api/file-system/plugin-manager";
+import { pluginManager } from "@/shared/api/plugin/plugin-manager";
 import { contextMenu } from "@/shared/ui/context-menu";
 import { folderIcon, fileIcon } from "@/shared/ui/icons";
 import { ExtractState } from "zustand";
@@ -13,15 +13,7 @@ export class ExplorerList {
   constructor(container: HTMLDivElement) {
     this.container = container;
 
-    this.unsubscribe = entryStore.subscribe((state, prevState) => {
-      if (
-        state.searchQuery !== prevState.searchQuery ||
-        state.viewMode !== prevState.viewMode ||
-        state.entries !== prevState.entries
-      ) {
-        this.render(state);
-      }
-    });
+    this.unsubscribe = entryStore.subscribe(this.render.bind(this));
 
     this.container.addEventListener("click", this.handleListClick.bind(this));
     this.container.addEventListener(
@@ -31,7 +23,17 @@ export class ExplorerList {
   }
 
   private render(state: ExtractState<typeof entryStore>) {
-    const { searchQuery, viewMode, entries } = state;
+    const { searchQuery, viewMode, entries, isLoading, error } = state;
+
+    if (error) {
+      this.container.innerHTML = this.getNoPermissionTemplate();
+      return;
+    }
+
+    if (isLoading) {
+      this.container.innerHTML = this.getLoadingTemplate();
+      return;
+    }
 
     this.filteredEntries = entries.filter((entry) =>
       entry.name.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -102,8 +104,7 @@ export class ExplorerList {
     if (!handle) return;
 
     if (handle.kind === "directory") {
-      const event = new CustomEvent("explorer:cd", { detail: handle });
-      window.dispatchEvent(event);
+      entryStore.getState().cdInto(handle);
     } else {
       pluginManager.handleDefaultAction(this.filteredEntries, index);
     }
@@ -131,6 +132,26 @@ export class ExplorerList {
     `;
   }
 
+  private getLoadingTemplate() {
+    return `
+      <div class="flex flex-col items-center justify-center h-48 gap-2 text-primary">
+        <span class="loading loading-ring loading-xl"></span>
+        <p class="text-sm font-medium animate-pulse">Parsing directory...</p>
+      </div>  
+    `;
+  }
+
+  private getNoPermissionTemplate() {
+    return `
+      <div class="flex flex-col items-center justify-center h-full text-muted-foreground gap-4 p-8 text-center">
+          <span>${folderIcon({ className: "size-40 opacity-20" })}</span>
+        <div>
+           <p class="text-lg font-bold">Permission Required</p>
+           <p class="text-sm opacity-70">Please click 'Load Folder' to start.</p>
+        </div>
+      </div>
+    `;
+  }
   destroy() {
     this.unsubscribe();
   }

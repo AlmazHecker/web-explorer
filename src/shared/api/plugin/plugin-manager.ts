@@ -1,4 +1,5 @@
-import { PluginContext, Entry, EntryPlugin, PluginAction } from "./types";
+import { Entry } from "../file-system/types";
+import { PluginContext, EntryPlugin, PluginAction } from "./types";
 
 class PluginManager {
   private plugins: EntryPlugin[] = [];

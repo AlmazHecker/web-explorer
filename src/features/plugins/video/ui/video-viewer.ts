@@ -1,4 +1,5 @@
-import { Entry, PluginContext } from "@/shared/api/file-system/types";
+import { Entry } from "@/shared/api/file-system/types";
+import { PluginContext } from "@/shared/api/plugin/types";
 import { chevronLeftIcon, chevronRightIcon } from "@/shared/ui/icons";
 
 export class VideoViewer {
