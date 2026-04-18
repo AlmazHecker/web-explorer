@@ -13,7 +13,7 @@ export class GlobalDropZone {
   private createOverlay() {
     this.container.className = `
       fixed inset-0 flex opacity-0 flex-col items-center justify-center
-      bg-base-100/60 backdrop-blur-md
+      bg-base-100/60 backdrop-blur-md pointer-events-none
       border-8 border-dashed border-primary/30 m-4 rounded-3xl transition-all duration-300
     `;
 
