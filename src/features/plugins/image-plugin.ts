@@ -35,7 +35,9 @@ export class ImagePlugin implements EntryPlugin {
     ];
   }
 
-  public handleSystemIntent(file: File) {
-    return this.imageViewer.open(file);
+  public handleSystemIntent(entry: Entry) {
+    if (entry.kind === "file") {
+      this.imageViewer.open(entry);
+    }
   }
 }

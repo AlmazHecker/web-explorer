@@ -32,7 +32,9 @@ export class MusicPlugin implements EntryPlugin {
     ];
   }
 
-  public handleSystemIntent(file: File) {
-    return this.playerBar.play(file);
+  public handleSystemIntent(entry: Entry) {
+    if (entry.kind === "file") {
+      return this.playerBar.play(entry);
+    }
   }
 }

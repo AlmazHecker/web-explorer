@@ -1,4 +1,5 @@
 import { entryStore } from "@/features/entry-navigation/model/store";
+import { Entry } from "@/shared/api/file-system/types";
 import { pluginManager } from "@/shared/api/plugin/plugin-manager";
 
 export class GlobalDropZone {
@@ -65,9 +66,8 @@ export class GlobalDropZone {
             .getState()
             .navigateTo([handle as FileSystemDirectoryHandle]);
         } else {
-          const file = await (handle as FileSystemFileHandle).getFile();
-          const plugin = pluginManager.getPluginForEntry(file);
-          plugin?.handleSystemIntent?.(file);
+          const plugin = pluginManager.getPluginForEntry(handle as Entry);
+          plugin?.handleSystemIntent?.(handle as Entry);
         }
       } else {
         alert("not supported...");

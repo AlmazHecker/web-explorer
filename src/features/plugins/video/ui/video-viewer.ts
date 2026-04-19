@@ -50,12 +50,12 @@ export class VideoViewer {
   }
 
   public async open(
-    entry: FileSystemFileHandle | File,
+    entry: FileSystemFileHandle,
     contextPromise?: Promise<PluginContext> | PluginContext,
   ): Promise<void> {
     if (!this.dialog.open) this.dialog.showModal();
 
-    const file = entry instanceof File ? entry : await entry.getFile();
+    const file = await entry.getFile();
     this.updateUI(file);
 
     this.currentEntries = [];

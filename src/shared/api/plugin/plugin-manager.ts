@@ -16,8 +16,8 @@ class PluginManager {
     plugin.initialize?.(this.rootSlot);
   }
 
-  public getPluginForEntry(entry: Entry | File): EntryPlugin | null {
-    if ("kind" in entry && entry.kind === "directory") return null;
+  public getPluginForEntry(entry: Entry): EntryPlugin | null {
+    if (entry.kind === "directory") return null;
 
     const name = entry.name;
     const dotIndex = name.lastIndexOf(".");

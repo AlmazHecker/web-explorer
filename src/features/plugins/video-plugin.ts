@@ -57,7 +57,9 @@ export class VideoPlugin implements EntryPlugin {
     ];
   }
 
-  public handleSystemIntent(file: File) {
-    return this.videoViewer.open(file);
+  public handleSystemIntent(entry: Entry) {
+    if (entry.kind === "file") {
+      this.videoViewer.open(entry);
+    }
   }
 }

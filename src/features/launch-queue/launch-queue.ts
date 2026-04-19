@@ -1,3 +1,4 @@
+import { Entry } from "@/shared/api/file-system/types";
 import { pluginManager } from "@/shared/api/plugin/plugin-manager";
 
 if ("launchQueue" in window && window.launchQueue) {
@@ -7,11 +8,10 @@ if ("launchQueue" in window && window.launchQueue) {
       if (fileHandle.kind === "directory") {
         return alert("not supported yet...");
       }
-      const file = await (fileHandle as FileSystemFileHandle).getFile();
 
-      const plugin = pluginManager.getPluginForEntry(file as File);
+      const plugin = pluginManager.getPluginForEntry(fileHandle as Entry);
       if (plugin?.handleSystemIntent) {
-        plugin.handleSystemIntent(file);
+        plugin.handleSystemIntent(fileHandle as Entry);
       } else {
         alert("No handler found...");
       }
