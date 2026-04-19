@@ -64,6 +64,7 @@
       `).join(""),this.container.querySelectorAll("[data-id]").forEach(l=>{l.addEventListener("click",()=>{const v=parseInt(l.getAttribute("data-id"),10);m.executeAction(e[v],i,s),this.hide()})}),this.container.classList.remove("hidden");const{innerWidth:r,innerHeight:a}=window,{offsetWidth:c,offsetHeight:g}=this.container;let h=t.clientX,d=t.clientY;t.clientX+c>r&&(h=t.clientX-c),t.clientY+g>a&&(d=t.clientY-g),this.container.style.left=`${h}px`,this.container.style.top=`${d}px`}hide(){this.container.classList.add("hidden")}}const pt=new gt;class mt{constructor(t){this.filteredEntries=[],this.container=t,this.unsubscribe=u.subscribe(this.render.bind(this)),this.container.addEventListener("click",this.handleListClick.bind(this)),this.container.addEventListener("contextmenu",this.handleContextMenu.bind(this))}render(t){const{searchQuery:e,viewMode:i,entries:s,isLoading:r,error:a}=t;if(a){this.container.innerHTML=this.getNoPermissionTemplate();return}if(r){this.container.innerHTML=this.getLoadingTemplate();return}if(this.filteredEntries=s.filter(c=>c.name.toLowerCase().includes(e.toLowerCase())),this.filteredEntries.length===0){this.container.innerHTML=this.getEmptyTemplate();return}i==="list"?this.container.innerHTML=`<div class="flex flex-col gap-1">${this.filteredEntries.map(this.createListEntryHtml).join("")}</div>`:this.container.innerHTML=`<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">${this.filteredEntries.map(this.createGridEntryHtml).join("")}</div>`}createListEntryHtml(t,e){const s=t.kind==="directory"?E({className:"size-full"}):m.getIconForEntry(t)||$({className:"size-full"});return`
       <button
         data-id="${e}"
+        title="${t.name}"
         class="flex items-center gap-3 px-3 py-2 text-left rounded-lg transition-all hover:bg-base-200 group w-full"
       >
         <div class="flex items-center justify-center w-8 h-8 rounded-md bg-primary/5 text-primary shrink-0 transition-colors group-hover:bg-primary/10">
@@ -77,6 +78,7 @@
       <button
         data-id="${e}"
         class="flex flex-col items-center gap-2 p-3 text-center rounded-xl transition-all hover:bg-base-200 group w-full"
+        title="${t.name}"
       >
         <div class="flex items-center justify-center aspect-square w-full rounded-lg bg-primary/5 text-primary shrink-0 transition-transform">
           <span class="size-3/5 mx-auto">${s}</span>
