@@ -61,6 +61,7 @@ export class ExplorerList {
     return `
       <button
         data-id="${index}"
+        title="${handle.name}"
         class="flex items-center gap-3 px-3 py-2 text-left rounded-lg transition-all hover:bg-base-200 group w-full"
       >
         <div class="flex items-center justify-center w-8 h-8 rounded-md bg-primary/5 text-primary shrink-0 transition-colors group-hover:bg-primary/10">
@@ -84,6 +85,7 @@ export class ExplorerList {
       <button
         data-id="${index}"
         class="flex flex-col items-center gap-2 p-3 text-center rounded-xl transition-all hover:bg-base-200 group w-full"
+        title="${handle.name}"
       >
         <div class="flex items-center justify-center aspect-square w-full rounded-lg bg-primary/5 text-primary shrink-0 transition-transform">
           <span class="size-3/5 mx-auto">${icon}</span>
