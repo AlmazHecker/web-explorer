@@ -1,21 +1,17 @@
 import { createStore } from "zustand/vanilla";
 import { Entry } from "@/shared/api/file-system/types";
 import { set as IDBSet, get as IDBGet } from "idb-keyval";
-import {
-  ROOT_HANDLE_KEY,
-  scanDirectory,
-} from "@/shared/api/file-system/scanner";
 import { createJSONStorage, persist } from "zustand/middleware";
+
+const ROOT_HANDLE_KEY = "root-directory-handle";
 
 interface EntryStore {
   entries: Entry[];
   history: FileSystemDirectoryHandle[];
   searchQuery: string;
   viewMode: "list" | "grid";
-  setEntries: (entries: Entry[]) => void;
   setSearchQuery: (query: string) => void;
   setViewMode: (mode: "list" | "grid") => void;
-  setHistory: (root: FileSystemDirectoryHandle[]) => void;
 
   isLoading: boolean;
 
@@ -35,14 +31,8 @@ export const entryStore = createStore<EntryStore>()(
       viewMode: "list",
       error: null,
 
-      setEntries: (entries) => set({ entries }),
       setSearchQuery: (searchQuery) => set({ searchQuery }),
       setViewMode: (viewMode) => set({ viewMode }),
-
-      setHistory: (history) => {
-        set({ history });
-      },
-
       requestDirectory: async (target) => {
         try {
           let handle: FileSystemDirectoryHandle[] | null = null;
@@ -63,9 +53,7 @@ export const entryStore = createStore<EntryStore>()(
       navigateTo: async (target: FileSystemDirectoryHandle[]) => {
         try {
           set({ isLoading: true });
-          const { setEntries, setHistory } = get();
           if (!target || target.length === 0) return;
-          setHistory(target);
           IDBSet(ROOT_HANDLE_KEY, target);
 
           const entries: Entry[] = [];
@@ -79,7 +67,7 @@ export const entryStore = createStore<EntryStore>()(
             return a.name.localeCompare(b.name);
           });
 
-          setEntries(entries);
+          set({ entries, history: target, error: null });
         } catch (error) {
           set({ error });
         } finally {
