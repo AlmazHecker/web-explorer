@@ -12,18 +12,18 @@
     "build:gh-pages": "vite build --mode gh-pages"
   },
   "dependencies": {
-    "@tailwindcss/vite": "^4.1.17",
+    "@tailwindcss/vite": "^4.2.4",
     "@types/wicg-web-app-launch": "^2023.1.4",
     "daisyui": "^5.5.19",
     "idb-keyval": "^6.2.2",
     "taglib-wasm": "^1.1.2",
-    "tailwindcss": "^4.1.17",
-    "zustand": "^5.0.9"
+    "tailwindcss": "^4.2.4",
+    "zustand": "^5.0.12"
   },
   "devDependencies": {
-    "@types/node": "^24.10.1",
+    "@types/node": "^25.6.0",
     "@types/wicg-file-system-access": "^2023.10.7",
-    "prettier": "^3.7.4",
-    "typescript": "^5.9.3"
+    "prettier": "^3.8.3",
+    "typescript": "^6.0.3"
   }
 }
