@@ -37,10 +37,9 @@ export class VideoPlayerBar {
 
     this.currentIndex = index;
     const entry = this.queue[index];
-    const file = await entry.getFile();
 
     const context = { entries: this.queue, relativeIndex: index };
-    this.videoViewer.open(file, context);
+    this.videoViewer.open(entry, context);
     this.render();
   }
 
