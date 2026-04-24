@@ -15,7 +15,6 @@ import { Entry } from "@/shared/api/file-system/types";
 import { PluginContext } from "@/shared/api/plugin/types";
 
 export class PlayerBar {
-  private container: HTMLElement;
   private audio: HTMLAudioElement;
   private metadata: TrackMetadata | null = null;
 
@@ -36,8 +35,10 @@ export class PlayerBar {
 
   private isDragging = false;
 
-  constructor(container: HTMLElement) {
-    this.container = container;
+  constructor(
+    private readonly container: HTMLElement,
+    private readonly onClosed: () => void,
+  ) {
     this.audio = new Audio();
     this.audio.loop = false;
 
@@ -195,6 +196,10 @@ export class PlayerBar {
     navigator.mediaSession.metadata = null;
 
     this.syncFullUI();
+
+    this.wrapper.addEventListener("transitionend", this.onClosed, {
+      once: true,
+    });
   }
 
   private cleanupResources() {

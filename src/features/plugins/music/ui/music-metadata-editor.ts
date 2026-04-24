@@ -48,7 +48,10 @@ export class MusicMetadataEditor {
     "Other",
   ];
 
-  constructor(private container: HTMLElement) {
+  constructor(
+    private container: HTMLElement,
+    private readonly onClosed: () => void,
+  ) {
     this.container.innerHTML = `
     <dialog id="metadata-editor-modal" class="modal">
       <div class="modal-box w-11/12 max-w-5xl bg-base-200 border border-white/10 p-0 overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
@@ -145,12 +148,20 @@ export class MusicMetadataEditor {
   }
 
   private bindEvents() {
-    this.dialog.addEventListener("close", () => {
-      // cleanup after modal exit animation
-      setTimeout(() => {
-        this.cleanup();
-      }, 300);
-    });
+    this.dialog.addEventListener(
+      "close",
+      () => {
+        this.dialog.addEventListener(
+          "transitionend",
+          () => {
+            this.cleanup();
+            this.onClosed();
+          },
+          { once: true },
+        );
+      },
+      { once: true },
+    );
 
     this.form.addEventListener("click", (e) => {
       const target = (e.target as HTMLElement).closest("[data-action]");

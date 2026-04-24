@@ -7,17 +7,26 @@ export class ImagePlugin implements EntryPlugin {
   public id = "image-plugin";
   public name = "Image Handler";
   public extensions = new Set(["png", "jpg", "jpeg", "gif", "webp"]);
-  private imageViewer!: ImageViewer;
+  private imageViewer: ImageViewer | null = null;
 
-  public initialize(rootSlot: HTMLElement) {
-    const viewerContainer = document.createElement("div");
-    viewerContainer.id = "image-viewer-container";
-    rootSlot.appendChild(viewerContainer);
-    this.imageViewer = new ImageViewer(viewerContainer);
-  }
+  constructor(private readonly rootSlot: HTMLElement) {}
 
   public getIcon(): string {
     return imageIcon({ className: "size-full" });
+  }
+
+  private get viewer(): ImageViewer {
+    if (!this.imageViewer) {
+      const viewerContainer = document.createElement("div");
+      viewerContainer.id = "image-viewer-container";
+      this.rootSlot.appendChild(viewerContainer);
+      this.imageViewer = new ImageViewer(viewerContainer, () => {
+        viewerContainer.remove();
+        this.imageViewer = null;
+      });
+    }
+
+    return this.imageViewer;
   }
 
   public getActions(entry: Entry): PluginAction[] {
@@ -27,7 +36,7 @@ export class ImagePlugin implements EntryPlugin {
         icon: playIcon(),
         handler: (entry, context) => {
           if (entry.kind !== "directory") {
-            this.imageViewer.open(entry, context);
+            this.viewer.open(entry, context);
           }
         },
         requiresContext: true,
@@ -37,7 +46,7 @@ export class ImagePlugin implements EntryPlugin {
 
   public handleSystemIntent(entry: Entry) {
     if (entry.kind === "file") {
-      this.imageViewer.open(entry);
+      this.viewer.open(entry);
     }
   }
 }

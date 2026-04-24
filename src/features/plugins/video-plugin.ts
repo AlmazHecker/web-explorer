@@ -8,24 +8,37 @@ export class VideoPlugin implements EntryPlugin {
   public id = "video-plugin";
   public name = "Video Handler";
   public extensions = new Set(["mp4", "webm"]);
-  private videoViewer!: VideoViewer;
-  private videoPlayerBar!: VideoPlayerBar;
+  private videoViewer: VideoViewer | null = null;
+  private videoPlayerBar: VideoPlayerBar | null = null;
+  constructor(private readonly rootSlot: HTMLElement) {}
+  private get viewer(): VideoViewer {
+    if (!this.videoViewer) {
+      const viewerContainer = document.createElement("div");
+      viewerContainer.id = "video-viewer-container";
+      this.rootSlot.appendChild(viewerContainer);
+      this.videoViewer = new VideoViewer(viewerContainer, () => {
+        viewerContainer.remove();
+        this.videoViewer = null;
+      });
+    }
+    return this.videoViewer;
+  }
 
-  public initialize(rootSlot: HTMLElement) {
-    // viewer mount point
-    const viewerContainer = document.createElement("div");
-    viewerContainer.id = "video-viewer-container";
-    rootSlot.appendChild(viewerContainer);
-    this.videoViewer = new VideoViewer(viewerContainer);
-
-    // player bar mount point
-    const playerBarContainer = document.createElement("div");
-    playerBarContainer.id = "video-player-bar-container";
-    rootSlot.appendChild(playerBarContainer);
-    this.videoPlayerBar = new VideoPlayerBar(
-      playerBarContainer,
-      this.videoViewer,
-    );
+  private get player(): VideoPlayerBar {
+    if (!this.videoPlayerBar) {
+      const playerBarContainer = document.createElement("div");
+      playerBarContainer.id = "video-player-bar-container";
+      this.rootSlot.appendChild(playerBarContainer);
+      this.videoPlayerBar = new VideoPlayerBar(
+        playerBarContainer,
+        this.viewer,
+        () => {
+          playerBarContainer.remove();
+          this.videoPlayerBar = null;
+        },
+      );
+    }
+    return this.videoPlayerBar;
   }
 
   public getIcon(): string {
@@ -39,7 +52,7 @@ export class VideoPlugin implements EntryPlugin {
         icon: playIcon(),
         handler: (entry, context) => {
           if (entry.kind !== "directory") {
-            this.videoViewer.open(entry, context);
+            this.viewer.open(entry, context);
           }
         },
         requiresContext: true,
@@ -49,7 +62,7 @@ export class VideoPlugin implements EntryPlugin {
         icon: plusIcon(),
         handler: (entry) => {
           if (entry.kind === "file") {
-            this.videoPlayerBar.addToQueue(entry);
+            this.player.addToQueue(entry);
           }
         },
         requiresContext: false,
@@ -59,7 +72,7 @@ export class VideoPlugin implements EntryPlugin {
 
   public handleSystemIntent(entry: Entry) {
     if (entry.kind === "file") {
-      this.videoViewer.open(entry);
+      this.viewer.open(entry);
     }
   }
 }

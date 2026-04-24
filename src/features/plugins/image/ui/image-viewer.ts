@@ -11,7 +11,10 @@ export class ImageViewer {
   private currentEntries: Entry[] = [];
   private currentIndex: number = -1;
 
-  constructor(private container: HTMLElement) {
+  constructor(
+    private container: HTMLElement,
+    private onClosed: () => void,
+  ) {
     this.container.innerHTML = `
     <dialog id="plugin-image-modal" class="modal">
       <div class="modal-box w-11/12 max-w-7xl h-[90vh] p-0 overflow-hidden bg-black/95 flex flex-col items-center justify-center border border-white/10 relative group">
@@ -57,7 +60,15 @@ export class ImageViewer {
       e.stopPropagation();
       this.navigate(1);
     };
-    this.dialog.addEventListener("close", this.onClose.bind(this));
+    this.dialog.addEventListener(
+      "close",
+      () => {
+        this.dialog.addEventListener("transitionend", this.onClosed, {
+          once: true,
+        });
+      },
+      { once: true },
+    );
   }
 
   public async open(
@@ -119,5 +130,6 @@ export class ImageViewer {
     URL.revokeObjectURL(this.image.src);
     this.currentEntries = [];
     this.currentIndex = -1;
+    this.onClosed();
   }
 }

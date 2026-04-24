@@ -5,23 +5,41 @@ import { musicIcon, playIcon } from "@/shared/ui/icons";
 import { MusicMetadataEditor } from "./music/ui/music-metadata-editor";
 
 export class MusicPlugin implements EntryPlugin {
-  public id = "music-plugin";
-  public name = "Music Handler";
-  public extensions = new Set(["mp3", "wav", "m4a", "flac", "ogg"]);
-  private playerBar!: PlayerBar;
-  private metadataEditor!: MusicMetadataEditor;
+  public readonly id = "music-plugin";
+  public readonly name = "Music Handler";
+  public readonly extensions = new Set(["mp3", "wav", "m4a", "flac", "ogg"]);
 
-  public initialize(rootSlot: HTMLElement) {
-    // viewer mount point
-    const viewerContainer = document.createElement("div");
-    viewerContainer.id = "music-player-bar-container";
-    rootSlot.appendChild(viewerContainer);
-    this.playerBar = new PlayerBar(viewerContainer);
+  private playerBar: PlayerBar | null = null;
+  private metadataEditor: MusicMetadataEditor | null = null;
 
-    const editorContainer = document.createElement("div");
-    editorContainer.id = "music-metadata-editor-container";
-    rootSlot.appendChild(editorContainer);
-    this.metadataEditor = new MusicMetadataEditor(editorContainer);
+  constructor(private readonly rootSlot: HTMLElement) {}
+
+  private get player() {
+    if (!this.playerBar) {
+      const viewerContainer = document.createElement("div");
+      viewerContainer.id = "music-player-bar-container";
+      this.rootSlot.appendChild(viewerContainer);
+      this.playerBar = new PlayerBar(viewerContainer, () => {
+        viewerContainer.remove();
+        this.playerBar = null;
+      });
+    }
+
+    return this.playerBar;
+  }
+
+  private get editor() {
+    if (!this.metadataEditor) {
+      const editorContainer = document.createElement("div");
+      editorContainer.id = "music-metadata-editor-container";
+      this.rootSlot.appendChild(editorContainer);
+      this.metadataEditor = new MusicMetadataEditor(editorContainer, () => {
+        editorContainer.remove();
+        this.metadataEditor = null;
+      });
+    }
+
+    return this.metadataEditor;
   }
 
   public getIcon(): string {
@@ -35,7 +53,7 @@ export class MusicPlugin implements EntryPlugin {
         icon: playIcon(),
         handler: async (entry, contextPromise) => {
           if (entry.kind !== "directory") {
-            this.playerBar.play(entry, contextPromise);
+            this.player.play(entry, contextPromise);
           }
         },
         requiresContext: true,
@@ -45,8 +63,8 @@ export class MusicPlugin implements EntryPlugin {
         icon: playIcon(),
         handler: async (entry) => {
           if (entry.kind !== "directory") {
-            this.playerBar.close();
-            this.metadataEditor.open(entry);
+            if (this.playerBar) this.playerBar.close();
+            this.editor.open(entry);
           }
         },
       },
@@ -55,7 +73,7 @@ export class MusicPlugin implements EntryPlugin {
 
   public handleSystemIntent(entry: Entry) {
     if (entry.kind === "file") {
-      return this.playerBar.play(entry);
+      return this.player.play(entry);
     }
   }
 }

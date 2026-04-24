@@ -27,11 +27,10 @@ export type PluginAction =
     };
 
 export interface EntryPlugin {
-  id: string;
-  name: string;
-  extensions: Set<string>;
+  readonly id: string;
+  readonly name: string;
+  readonly extensions: Set<string>;
 
-  initialize?(rootSlot: HTMLElement): void;
   getIcon?(entry: Entry): string | null;
   getActions?(entry: Entry): PluginAction[];
   // special action for handling system intents ("Open With" option on OS context menu)

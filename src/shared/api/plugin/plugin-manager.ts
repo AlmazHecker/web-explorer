@@ -9,11 +9,10 @@ class PluginManager {
     this.rootSlot = rootSlot;
   }
 
-  public register(Plugin: { new (): EntryPlugin }) {
-    const plugin = new Plugin();
+  public register(Plugin: { new (rootSlot: HTMLElement): EntryPlugin }) {
+    const plugin = new Plugin(this.rootSlot);
     if (this.plugins.some((p) => p.id === plugin.id)) return;
     this.plugins.push(plugin);
-    plugin.initialize?.(this.rootSlot);
   }
 
   public getPluginForEntry(entry: Entry): EntryPlugin | null {

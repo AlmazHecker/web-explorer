@@ -1,4 +1,3 @@
-import { PluginContext } from "@/shared/api/plugin/types";
 import { VideoViewer } from "./video-viewer";
 
 export class VideoPlayerBar {
@@ -7,7 +6,11 @@ export class VideoPlayerBar {
   private videoViewer: VideoViewer;
   private container: HTMLDivElement;
 
-  constructor(container: HTMLDivElement, videoViewer: VideoViewer) {
+  constructor(
+    container: HTMLDivElement,
+    videoViewer: VideoViewer,
+    private readonly onClosed: () => void,
+  ) {
     this.container = container;
     this.videoViewer = videoViewer;
     this.container.className =
@@ -17,19 +20,32 @@ export class VideoPlayerBar {
   }
 
   private setupListeners() {
-    this.container.addEventListener("click", (e) => {
-      const target = e.target as HTMLElement;
-      const entryRow = target.closest("[data-id]");
-      if (!entryRow) return;
+    this.container.addEventListener(
+      "click",
+      this.handleContainerClick.bind(this),
+    );
+  }
 
-      const index = Number(entryRow.getAttribute("data-id"));
+  private handleContainerClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    const entryRow = target.closest("[data-id]");
+    if (!entryRow) return;
 
-      if (target.closest(".btn-remove")) {
-        this.removeFromQueue(index);
-      } else {
-        this.playAt(index);
-      }
-    });
+    const index = Number(entryRow.getAttribute("data-id"));
+
+    if (target.closest(".btn-remove")) {
+      this.removeFromQueue(index);
+    } else {
+      this.playAt(index);
+    }
+  }
+
+  private destroy() {
+    this.container.removeEventListener(
+      "click",
+      this.handleContainerClick.bind(this),
+    );
+    this.onClosed();
   }
 
   public async playAt(index: number) {
@@ -66,17 +82,20 @@ export class VideoPlayerBar {
   public removeFromQueue(index: number) {
     this.queue.splice(index, 1);
 
+    if (this.queue.length === 0) {
+      this.destroy();
+      return;
+    }
+
     if (index === this.currentIndex) {
       this.currentIndex = -1;
-      if (this.queue.length > 0)
-        this.playAt(Math.min(index, this.queue.length - 1));
+      this.playAt(Math.min(index, this.queue.length - 1));
     } else if (index < this.currentIndex) {
       this.currentIndex--;
     }
 
     this.render();
   }
-
   private render() {
     if (this.queue.length === 0) {
       this.container.classList.add("hidden");

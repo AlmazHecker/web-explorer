@@ -11,7 +11,10 @@ export class VideoViewer {
   private currentEntries: Entry[] = [];
   private currentIndex: number = -1;
 
-  constructor(private container: HTMLElement) {
+  constructor(
+    private container: HTMLElement,
+    private readonly onClosed: () => void,
+  ) {
     this.container.innerHTML = `
     <dialog id="plugin-video-modal" class="modal">
       <div class="modal-box w-11/12 max-w-5xl p-0 overflow-hidden bg-black relative group">
@@ -46,7 +49,15 @@ export class VideoViewer {
 
     this.prevBtn.onclick = () => this.navigate(-1);
     this.nextBtn.onclick = () => this.navigate(1);
-    this.dialog.addEventListener("close", this.onClose.bind(this));
+    this.dialog.addEventListener(
+      "close",
+      () => {
+        this.dialog.addEventListener("transitionend", this.onClosed, {
+          once: true,
+        });
+      },
+      { once: true },
+    );
   }
 
   public async open(
