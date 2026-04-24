@@ -146,7 +146,10 @@ export class MusicMetadataEditor {
 
   private bindEvents() {
     this.dialog.addEventListener("close", () => {
-      this.cleanup();
+      // cleanup after modal exit animation
+      setTimeout(() => {
+        this.cleanup();
+      }, 300);
     });
 
     this.form.addEventListener("click", (e) => {

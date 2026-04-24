@@ -21,9 +21,9 @@ class PluginManager {
 
     const name = entry.name;
     const dotIndex = name.lastIndexOf(".");
+
     if (dotIndex <= 0) return null;
     const ext = name.slice(dotIndex + 1).toLowerCase();
-
     return this.plugins.find((p) => p.extensions.has(ext)) || null;
   }
 
@@ -41,10 +41,10 @@ class PluginManager {
     const targetEntry = entries[at];
     // plugin constant should be either passed as param or obtained in some other way
     // Currently we are recomputing plugin for each action
-    const plugin = this.getPluginForEntry(targetEntry);
-    if (!plugin) return;
 
     if (action.requiresContext) {
+      const plugin = this.getPluginForEntry(targetEntry);
+      if (!plugin) return;
       const contextPromise = this.getContextEntries(
         entries,
         at,

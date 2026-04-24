@@ -5,7 +5,6 @@ import { MusicPlugin } from "./features/plugins/music-plugin";
 import { VideoPlugin } from "./features/plugins/video-plugin";
 import { ImagePlugin } from "./features/plugins/image-plugin";
 import { GlobalDropZone } from "./features/global-dropzone/global-dropzone";
-import "@/features/launch-queue/launch-queue";
 
 const bootstrapApp = () => {
   const theme = localStorage.getItem("theme");
@@ -51,3 +50,5 @@ if ("serviceWorker" in navigator && !import.meta.env.DEV) {
     navigator.serviceWorker.register(`${import.meta.env.BASE_URL}sw.js`);
   });
 }
+
+import "@/features/launch-queue/launch-queue";
