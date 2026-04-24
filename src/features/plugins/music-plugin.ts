@@ -1,7 +1,7 @@
 import { Entry } from "@/shared/api/file-system/types";
 import { EntryPlugin, PluginAction } from "@/shared/api/plugin/types";
 import { PlayerBar } from "./music/ui/music-player-bar";
-import { musicIcon, playIcon } from "@/shared/ui/icons";
+import { musicIcon, playIcon, squarePen } from "@/shared/ui/icons";
 import { MusicMetadataEditor } from "./music/ui/music-metadata-editor";
 
 export class MusicPlugin implements EntryPlugin {
@@ -60,7 +60,7 @@ export class MusicPlugin implements EntryPlugin {
       },
       {
         label: "Edit Music Metadata",
-        icon: playIcon(),
+        icon: squarePen(),
         handler: async (entry) => {
           if (entry.kind !== "directory") {
             if (this.playerBar) this.playerBar.close();
