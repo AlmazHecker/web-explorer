@@ -49,15 +49,9 @@ export class VideoViewer {
 
     this.prevBtn.onclick = () => this.navigate(-1);
     this.nextBtn.onclick = () => this.navigate(1);
-    this.dialog.addEventListener(
-      "close",
-      () => {
-        this.dialog.addEventListener("transitionend", this.onClosed, {
-          once: true,
-        });
-      },
-      { once: true },
-    );
+    this.dialog.addEventListener("close", () => this.onClose(), {
+      once: true,
+    });
   }
 
   public async open(
@@ -129,6 +123,7 @@ export class VideoViewer {
     this.cleanup();
     this.currentEntries = [];
     this.currentIndex = -1;
+    this.onClosed();
   }
 
   public getVideoName() {
