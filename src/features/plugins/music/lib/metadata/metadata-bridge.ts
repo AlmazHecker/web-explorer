@@ -1,34 +1,44 @@
 import { TrackMetadata } from "../../model/types";
 import MetadataWorker from "./metadata.worker?worker";
 
-type WorkerTarget = "player";
-
 export interface WorkerInput {
-  target: WorkerTarget;
+  id: string;
   file: File;
   quality: "low" | "high";
 }
 
 export interface WorkerOutput {
-  target: WorkerTarget;
+  id: string;
   metadata?: TrackMetadata;
   error?: string;
 }
 
 const worker = typeof window !== "undefined" ? new MetadataWorker() : null;
-const listeners = new Map<string, (data: WorkerOutput) => void>();
+
+const pending = new Map<string, (data: WorkerOutput) => void>();
+
 if (worker) {
   worker.onmessage = (e: MessageEvent<WorkerOutput>) => {
-    listeners.get(e.data.target)?.(e.data);
+    const resolve = pending.get(e.data.id);
+    if (resolve) {
+      resolve(e.data);
+      pending.delete(e.data.id);
+    }
   };
 }
 
 export const metadataBridge = {
-  send: (tasks: WorkerInput) => {
-    worker?.postMessage(tasks);
-  },
-  subscribe: (target: WorkerTarget, callback: (data: WorkerOutput) => void) => {
-    listeners.set(target, callback);
-    return () => listeners.delete(target);
+  request: (input: Omit<WorkerInput, "id">): Promise<WorkerOutput> => {
+    if (!worker) {
+      return Promise.reject("Worker not available");
+    }
+
+    const id = crypto.randomUUID();
+
+    return new Promise((resolve) => {
+      pending.set(id, resolve);
+
+      worker.postMessage({ file: input.file, quality: input.quality, id });
+    });
   },
 };

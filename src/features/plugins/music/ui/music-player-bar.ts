@@ -1,4 +1,3 @@
-import { TrackMetadata } from "@/features/plugins/music/model/types";
 import { metadataBridge } from "@/features/plugins/music/lib/metadata/metadata-bridge";
 import { formatTime } from "@/shared/lib/utils";
 import {
@@ -16,7 +15,6 @@ import { PluginContext } from "@/shared/api/plugin/types";
 
 export class PlayerBar {
   private audio: HTMLAudioElement;
-  private metadata: TrackMetadata | null = null;
 
   private currentEntries: Entry[] = [];
   private currentIndex: number = -1;
@@ -34,6 +32,7 @@ export class PlayerBar {
   private closeBtn: HTMLButtonElement;
 
   private isDragging = false;
+  private destroyEvents: null | (() => void);
 
   constructor(
     private readonly container: HTMLElement,
@@ -85,11 +84,13 @@ export class PlayerBar {
     this.nextBtn = this.container.querySelector("#pb-next")!;
     this.closeBtn = this.container.querySelector("#pb-close")!;
 
-    this.initAudioListeners();
-    this.bindEvents();
+    this.destroyEvents = this.bindEvents();
+  }
+  private seek(time: number) {
+    this.audio.currentTime = time;
   }
 
-  private initAudioListeners() {
+  private bindEvents(): () => void {
     this.audio.ontimeupdate = () => this.updateProgress();
     this.audio.onplay = () => this.updatePlaybackState();
     this.audio.onpause = () => this.updatePlaybackState();
@@ -100,26 +101,6 @@ export class PlayerBar {
       this.updateProgress();
     };
 
-    metadataBridge.subscribe("player", (e) => {
-      if (e.error) return;
-      if (e.metadata) this.metadata = e.metadata;
-
-      if (this.metadata) {
-        navigator.mediaSession.metadata = new MediaMetadata({
-          title: this.metadata.title,
-          artist: this.metadata.artist,
-          album: this.metadata.album,
-          artwork: this.metadata.artwork
-            ? [{ src: this.metadata.artwork.src }]
-            : [],
-        });
-        this.setupMediaSessionAPI();
-      }
-      this.syncFullUI();
-    });
-  }
-
-  private setupMediaSessionAPI() {
     navigator.mediaSession.setActionHandler("play", () => this.toggle());
     navigator.mediaSession.setActionHandler("pause", () => this.toggle());
     navigator.mediaSession.setActionHandler("nexttrack", () => this.next());
@@ -128,54 +109,72 @@ export class PlayerBar {
     navigator.mediaSession.setActionHandler("seekto", (details) => {
       if (details.seekTime != null) this.seek(details.seekTime);
     });
-  }
 
-  private seek(time: number) {
-    this.audio.currentTime = time;
-  }
-
-  private bindEvents() {
-    this.playPauseBtn.addEventListener("click", () => this.toggle());
-    this.prevBtn.addEventListener("click", () => this.prev());
-    this.nextBtn.addEventListener("click", () => this.next());
-    this.closeBtn.addEventListener("click", () => this.close());
-
-    this.progress.addEventListener("input", (e) => {
+    this.playPauseBtn.onclick = () => this.toggle();
+    this.prevBtn.onclick = () => this.prev();
+    this.nextBtn.onclick = () => this.next();
+    this.closeBtn.onclick = () => this.close();
+    this.progress.oninput = () => {
       this.isDragging = true;
-      this.seek(parseFloat((e.target as HTMLInputElement).value));
-    });
-    this.progress.addEventListener("change", () => {
+      this.seek(parseFloat(this.progress.value));
+    };
+    this.progress.onchange = () => {
       this.isDragging = false;
-    });
-
-    this.volumeSlider.addEventListener("input", (e) => {
+    };
+    this.volumeSlider.oninput = (e) => {
       this.audio.volume = parseFloat((e.target as HTMLInputElement).value);
-    });
-
-    this.muteBtn.addEventListener("click", () => {
+    };
+    this.muteBtn.onclick = () => {
       this.audio.volume = this.audio.volume === 0 ? 1 : 0;
-    });
+    };
+
+    return () => {
+      // unsubscribeMetadata();
+
+      this.audio.ontimeupdate = null;
+      this.audio.onplay = null;
+      this.audio.onpause = null;
+      this.audio.onvolumechange = null;
+      this.audio.onended = null;
+      this.audio.onloadedmetadata = null;
+
+      navigator.mediaSession.setActionHandler("play", null);
+      navigator.mediaSession.setActionHandler("pause", null);
+      navigator.mediaSession.setActionHandler("nexttrack", null);
+      navigator.mediaSession.setActionHandler("previoustrack", null);
+      navigator.mediaSession.setActionHandler("stop", null);
+      navigator.mediaSession.setActionHandler("seekto", null);
+
+      this.playPauseBtn.onclick = null;
+      this.prevBtn.onclick = null;
+      this.nextBtn.onclick = null;
+      this.closeBtn.onclick = null;
+      this.progress.oninput = null;
+      this.progress.onchange = null;
+      this.volumeSlider.oninput = null;
+      this.muteBtn.onclick = null;
+    };
   }
 
   private async loadEntry(index: number) {
     const entry = this.currentEntries[index];
     if (entry?.kind === "file") {
       this.currentIndex = index;
-      const file = await (entry as any).getFile();
-      await this.play(file);
+      return this.play(entry);
     }
   }
 
   public async play(
-    target: File | FileSystemFileHandle,
+    target: FileSystemFileHandle,
     contextPromise?: Promise<PluginContext>,
   ) {
     this.cleanupResources();
 
-    const file = target instanceof File ? target : await target.getFile();
+    const file = await target.getFile();
 
     this.audio.src = URL.createObjectURL(file);
-    metadataBridge.send({ target: "player", file, quality: "high" });
+    this.requestMetadata(file);
+
     await this.audio.play();
 
     if (contextPromise) {
@@ -186,29 +185,43 @@ export class PlayerBar {
     }
   }
 
+  private async requestMetadata(file: File) {
+    const e = await metadataBridge.request({ file, quality: "high" });
+    if (e.error || !e.metadata) return;
+
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: e.metadata.title,
+      artist: e.metadata.artist,
+      album: e.metadata.album,
+      artwork: e.metadata.artwork ? [{ src: e.metadata.artwork.src }] : [],
+    });
+    this.syncFullUI();
+  }
+
   public close() {
+    if (this.destroyEvents) {
+      this.destroyEvents();
+      this.destroyEvents = null;
+    }
+
     this.audio.pause();
     this.cleanupResources();
-    this.metadata = null;
-    this.currentEntries = [];
-    this.currentIndex = -1;
 
     navigator.mediaSession.metadata = null;
-
+    this.currentEntries = [];
+    this.currentIndex = -1;
     this.syncFullUI();
-
-    this.wrapper.addEventListener("transitionend", this.onClosed, {
-      once: true,
-    });
+    this.onClosed();
   }
 
   private cleanupResources() {
     if (this.audio.src) {
       URL.revokeObjectURL(this.audio.src);
-      this.audio.src = "";
+      this.audio.removeAttribute("src");
+      this.audio.load();
     }
-    if (this.metadata?.artwork.src) {
-      URL.revokeObjectURL(this.metadata.artwork.src);
+    if (navigator.mediaSession.metadata?.artwork) {
+      URL.revokeObjectURL(navigator.mediaSession.metadata.artwork[0].src);
     }
   }
 
@@ -263,20 +276,19 @@ export class PlayerBar {
   }
 
   private syncFullUI() {
-    const hasMetadata = !!this.metadata;
+    const hasMetadata = !!navigator.mediaSession.metadata;
     this.wrapper.classList.toggle("translate-y-full", !hasMetadata);
     this.wrapper.classList.toggle("pointer-events-none", !hasMetadata);
 
     if (!hasMetadata) return;
 
-    this.title.textContent = this.metadata?.title || "Unknown Track";
+    this.title.textContent =
+      navigator.mediaSession.metadata?.title || "Unknown Track";
     this.updateNavButtons();
 
-    if (this.metadata?.artwork.src) {
-      this.artwork.innerHTML = `<img src="${this.metadata.artwork.src}" class="w-full h-full object-cover rounded-lg" />`;
-    } else {
-      this.artwork.innerHTML = musicIcon();
-    }
+    this.artwork.innerHTML = navigator.mediaSession.metadata?.artwork.length
+      ? `<img src="${navigator.mediaSession.metadata.artwork[0].src}" class="w-full h-full object-cover rounded-lg" />`
+      : musicIcon();
 
     this.updateProgress();
     this.updatePlaybackState();

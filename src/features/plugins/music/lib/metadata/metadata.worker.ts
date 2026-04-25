@@ -4,7 +4,7 @@ import { WorkerInput, WorkerOutput } from "./metadata-bridge";
 const wasmReady = TagLib.initialize();
 
 self.onmessage = async (e: MessageEvent<WorkerInput>) => {
-  const { target, file, quality } = e.data;
+  const { id, file, quality } = e.data;
 
   try {
     const taglib = await wasmReady;
@@ -54,7 +54,7 @@ self.onmessage = async (e: MessageEvent<WorkerInput>) => {
     }
 
     const response: WorkerOutput = {
-      target,
+      id,
       metadata: {
         artist: tags?.artist || "Unknown Artist",
         title: tags?.title || file.name,
@@ -68,7 +68,7 @@ self.onmessage = async (e: MessageEvent<WorkerInput>) => {
     self.postMessage(response);
   } catch (error) {
     self.postMessage({
-      target,
+      id,
       error:
         error instanceof Error ? error.message : "Failed to parse metadata",
     });
