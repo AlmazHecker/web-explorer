@@ -46,6 +46,9 @@ export const entryStore = createStore<EntryStore>()(
 
           return get().navigateTo(handle);
         } catch (error) {
+          if (error instanceof Error && error?.name === "AbortError") {
+            return;
+          }
           set({ error });
         }
       },
