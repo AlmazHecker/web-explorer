@@ -151,14 +151,8 @@ export class MusicMetadataEditor {
     this.dialog.addEventListener(
       "close",
       () => {
-        this.dialog.addEventListener(
-          "transitionend",
-          () => {
-            this.cleanup();
-            this.onClosed();
-          },
-          { once: true },
-        );
+        this.cleanup();
+        this.onClosed();
       },
       { once: true },
     );

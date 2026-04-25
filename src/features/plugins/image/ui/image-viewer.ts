@@ -60,15 +60,7 @@ export class ImageViewer {
       e.stopPropagation();
       this.navigate(1);
     };
-    this.dialog.addEventListener(
-      "close",
-      () => {
-        this.dialog.addEventListener("transitionend", this.onClosed, {
-          once: true,
-        });
-      },
-      { once: true },
-    );
+    this.dialog.addEventListener("close", () => this.onClose(), { once: true });
   }
 
   public async open(
