@@ -3,10 +3,7 @@ import { Entry } from "@/shared/api/file-system/types";
 import { pluginManager } from "@/shared/api/plugin/plugin-manager";
 
 export class GlobalDropZone {
-  private container: HTMLDivElement;
-
-  constructor(container: HTMLDivElement) {
-    this.container = container;
+  constructor(private readonly container: HTMLElement) {
     this.createOverlay();
     this.setupListeners();
   }

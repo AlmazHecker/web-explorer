@@ -5,14 +5,11 @@ import { MusicPlugin } from "./features/plugins/music-plugin";
 import { VideoPlugin } from "./features/plugins/video-plugin";
 import { ImagePlugin } from "./features/plugins/image-plugin";
 import { GlobalDropZone } from "./features/global-dropzone/global-dropzone";
+import { setupLaunchQueue } from "./features/launch-queue/launch-queue";
 
 const bootstrapApp = () => {
-  const theme = localStorage.getItem("theme");
-  if (theme) {
-    document.documentElement.setAttribute("data-theme", theme);
-  } else {
-    document.documentElement.setAttribute("data-theme", "dark");
-  }
+  const theme = localStorage.getItem("theme") || "dark";
+  document.documentElement.setAttribute("data-theme", theme);
 
   const app = document.getElementById("app")!;
   app.className =
@@ -32,15 +29,11 @@ const bootstrapApp = () => {
   pluginManager.register(MusicPlugin);
   pluginManager.register(VideoPlugin);
   pluginManager.register(ImagePlugin);
+  setupLaunchQueue(pluginManager);
 
   new Header(document.getElementById("header-container")!);
-  new EntryExplorer(
-    document.getElementById("explorer-container")! as HTMLDivElement,
-  );
-
-  new GlobalDropZone(
-    document.getElementById("global-dropzone")! as HTMLDivElement,
-  );
+  new EntryExplorer(document.getElementById("explorer-container")!);
+  new GlobalDropZone(document.getElementById("global-dropzone")!);
 };
 
 bootstrapApp();
@@ -50,5 +43,3 @@ if ("serviceWorker" in navigator && !import.meta.env.DEV) {
     navigator.serviceWorker.register(`${import.meta.env.BASE_URL}sw.js`);
   });
 }
-
-import "@/features/launch-queue/launch-queue";

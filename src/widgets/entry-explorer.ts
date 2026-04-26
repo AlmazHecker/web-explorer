@@ -6,14 +6,11 @@ import { ExplorerBreadcrumbs } from "@/features/entry-navigation/ui/explorer-bre
 import { entryStore } from "@/features/entry-navigation/model/store";
 
 export class EntryExplorer {
-  private container: HTMLDivElement;
   private toolbar!: ExplorerToolbar;
   private list!: ExplorerList;
   private breadcrumbs!: ExplorerBreadcrumbs;
 
-  constructor(container: HTMLDivElement) {
-    this.container = container;
-
+  constructor(private readonly container: HTMLElement) {
     this.renderShell();
     entryStore.getState().requestDirectory("LAST");
   }
