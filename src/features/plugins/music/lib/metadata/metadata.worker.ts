@@ -15,10 +15,12 @@ self.onmessage = async (e: MessageEvent<WorkerInput>) => {
 
     audioFile.dispose();
 
-    const artwork: MediaImage = { src: "" };
+    let artwork: MediaImage | undefined;
     const picture = coverData?.[0];
 
     if (picture) {
+      artwork = { src: "" };
+
       const originalBlob = new Blob([picture.data as BlobPart], {
         type: picture.mimeType,
       });
@@ -45,11 +47,10 @@ self.onmessage = async (e: MessageEvent<WorkerInput>) => {
         artwork.type = "image/jpeg";
       } else {
         const originalBitmap = await createImageBitmap(originalBlob);
-        originalBitmap.close();
-
         artwork.src = URL.createObjectURL(originalBlob);
         artwork.sizes = `${originalBitmap.width}x${originalBitmap.height}`;
         artwork.type = picture.mimeType;
+        originalBitmap.close();
       }
     }
 

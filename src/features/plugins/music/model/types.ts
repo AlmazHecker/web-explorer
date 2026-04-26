@@ -1,4 +1,4 @@
 export interface TrackMetadata extends Omit<MediaMetadata, "artwork"> {
-  artwork: MediaImage;
+  artwork?: MediaImage;
   lyrics: string;
 }

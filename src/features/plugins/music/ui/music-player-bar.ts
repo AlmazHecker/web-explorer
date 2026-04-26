@@ -193,7 +193,7 @@ export class PlayerBar {
       title: e.metadata.title,
       artist: e.metadata.artist,
       album: e.metadata.album,
-      artwork: e.metadata.artwork ? [{ src: e.metadata.artwork.src }] : [],
+      artwork: e.metadata.artwork ? [e.metadata.artwork] : [],
     });
     this.syncFullUI();
   }
@@ -220,7 +220,11 @@ export class PlayerBar {
       this.audio.removeAttribute("src");
       this.audio.load();
     }
-    if (navigator.mediaSession.metadata?.artwork) {
+
+    if (
+      navigator.mediaSession.metadata?.artwork &&
+      navigator.mediaSession.metadata.artwork.length !== 0
+    ) {
       URL.revokeObjectURL(navigator.mediaSession.metadata.artwork[0].src);
     }
   }
