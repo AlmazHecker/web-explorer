@@ -59,7 +59,9 @@ export class MusicMetadataEditor {
           <div class="flex items-center gap-3">
             <h3 class="font-bold text-xl tracking-tight">Tag Editor</h3>
           </div>
-          <button type="button" class="btn btn-sm btn-circle btn-ghost" data-action="${ACTION.CANCEL}">✕</button>
+          <form method="dialog">
+            <button class="btn btn-sm btn-circle btn-ghost">✕</button>
+          </form>
         </div>
         
         <form id="metadata-form" class="p-6 space-y-10 overflow-y-auto grow text-base">
@@ -98,7 +100,6 @@ export class MusicMetadataEditor {
           </div>
         </form>
       </div>
-      <form method="dialog" class="modal-backdrop"><button>close</button></form>
     </dialog>`;
 
     this.dialog = this.container.querySelector("#metadata-editor-modal")!;
