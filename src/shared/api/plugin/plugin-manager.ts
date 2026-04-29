@@ -4,6 +4,7 @@ import { PluginContext, EntryPlugin, PluginAction } from "./types";
 class PluginManager {
   private plugins: EntryPlugin[] = [];
   private rootSlot!: HTMLElement;
+  private extensionToPlugin: Map<string, EntryPlugin> = new Map();
 
   public setRootSlot(rootSlot: HTMLElement) {
     this.rootSlot = rootSlot;
@@ -13,6 +14,10 @@ class PluginManager {
     const plugin = new Plugin(this.rootSlot);
     if (this.plugins.some((p) => p.id === plugin.id)) return;
     this.plugins.push(plugin);
+
+    for (const ext of plugin.extensions) {
+      this.extensionToPlugin.set(ext.toLowerCase(), plugin);
+    }
   }
 
   public getPluginForEntry(entry: Entry): EntryPlugin | null {
@@ -23,7 +28,7 @@ class PluginManager {
 
     if (dotIndex <= 0) return null;
     const ext = name.slice(dotIndex + 1).toLowerCase();
-    return this.plugins.find((p) => p.extensions.has(ext)) || null;
+    return this.extensionToPlugin.get(ext) || null;
   }
 
   public getIconForEntry(entry: Entry): string | null {
