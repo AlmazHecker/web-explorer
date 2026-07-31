@@ -1,8 +1,8 @@
 import { defineConfig } from "vite";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
-import { dynamicManifestPlugin } from "./vite-plugins/dynamicManifest";
-import { getAppManifest } from "./pwa/manifest";
+import { dynamicManifestPlugin } from "./vite-plugins/dynamicManifest.ts";
+import { getAppManifest } from "./pwa/manifest.ts";
 
 export default defineConfig(({ mode }) => {
   const BASE = mode === "gh-pages" ? "/web-explorer/" : "/";
@@ -34,7 +34,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     base: BASE,
-    resolve: { alias: { "@": path.resolve(__dirname, "./src") } },
+    resolve: { alias: { "@": path.resolve(import.meta.dirname, "./src"), } },
     define: { __BUILD_TIMESTAMP__: `"${new Date().toISOString()}"` },
     optimizeDeps: {
       exclude: ["taglib-wasm"],

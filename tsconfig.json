@@ -1,11 +1,17 @@
 {
-  "include": ["**/*"],
-  "exclude": ["dist"],
+  "include": [
+    "**/*"
+  ],
+  "exclude": [
+    "dist"
+  ],
   "compilerOptions": {
     "noEmit": true,
     "strict": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     },
     "types": [
       "@types/wicg-file-system-access",
@@ -17,7 +23,10 @@
     "module": "ES2022",
     "target": "ES2015",
     "resolveJsonModule": true,
-    "lib": ["DOM"],
-    "skipLibCheck": true
+    "lib": [
+      "DOM"
+    ],
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": true
   }
 }
