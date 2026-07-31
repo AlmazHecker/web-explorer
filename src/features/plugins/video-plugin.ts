@@ -7,7 +7,7 @@ import { VideoPlayerBar } from "./video/ui/video-player-bar";
 export class VideoPlugin implements EntryPlugin {
   public id = "video-plugin";
   public name = "Video Handler";
-  public extensions = new Set(["mp4", "webm"]);
+  public extensions = new Set(["mp4", "webm", "ogg", "mov", "mkv", "avi", "m4v"]);
   private videoViewer: VideoViewer | null = null;
   private videoPlayerBar: VideoPlayerBar | null = null;
   constructor(private readonly rootSlot: HTMLElement) {}

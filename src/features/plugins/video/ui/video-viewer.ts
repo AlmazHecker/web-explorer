@@ -22,13 +22,13 @@ export class VideoViewer {
           <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-white bg-black/20 hover:bg-black/40 z-3">✕</button>
         </form>
         
-        <div class="absolute inset-y-0 left-0 w-24 flex items-center justify-start pl-4 z-2">
+        <div class="absolute top-1/2 -translate-y-1/2 left-0 w-24 flex items-center justify-start pl-4 z-2">
           <button id="video-prev" class="btn btn-circle btn-ghost text-white bg-black/40 hover:bg-black/60 disabled:hidden active:scale-95 ">
             ${chevronLeftIcon({ width: 32, height: 32, className: "stroke-[2.5]" })}
           </button>
         </div>
         
-        <div class="absolute inset-y-0 right-0 w-24 flex items-center justify-end pr-4 z-2">
+        <div class="absolute top-1/2 -translate-y-1/2 right-0 w-24 flex items-center justify-end pr-4 z-2">
           <button id="video-next" class="btn btn-circle btn-ghost text-white bg-black/40 hover:bg-black/60 disabled:hidden active:scale-95 ">
             ${chevronRightIcon({ width: 32, height: 32, className: "stroke-[2.5]" })}
           </button>
@@ -92,6 +92,12 @@ export class VideoViewer {
 
     this.video.dataset.name = file.name;
     this.video.src = URL.createObjectURL(file);
+
+    if ("mediaSession" in navigator) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: file.name,
+      });
+    }
   }
 
   private navigate(direction: number) {
@@ -116,6 +122,9 @@ export class VideoViewer {
     if (this.video.src) {
       URL.revokeObjectURL(this.video.src);
       this.video.src = "";
+    }
+    if ("mediaSession" in navigator) {
+      navigator.mediaSession.metadata = null;
     }
   }
 
